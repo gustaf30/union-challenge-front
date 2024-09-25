@@ -27,9 +27,9 @@ export default function Home() {
 
       <div className="mb-4">
         <Button onClick={() => setFilter('')}>Todas</Button>
-        <Button onClick={() => setFilter('pending')}>Pendentes</Button>
-        <Button onClick={() => setFilter('in-progress')}>Em Progresso</Button>
-        <Button onClick={() => setFilter('completed')}>Completas</Button>
+        <Button onClick={() => setFilter('0')}>Pendentes</Button>
+        <Button onClick={() => setFilter('1')}>Em Progresso</Button>
+        <Button onClick={() => setFilter('2')}>Completas</Button>
       </div>
 
       <Link href="/new">
