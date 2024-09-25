@@ -52,9 +52,9 @@ export default function EditTask() {
             value={task.status}
             onChange={(e) => setTask({ ...task, status: e.target.value })}
           >
-            <option value="pending">Pendente</option>
-            <option value="in-progress">Em Progresso</option>
-            <option value="completed">Completa</option>
+            <option value="0">Pendente</option>
+            <option value="1">Em Progresso</option>
+            <option value="2">Completa</option>
           </Select>
         </div>
         <Button type="submit">Salvar Alterações</Button>
