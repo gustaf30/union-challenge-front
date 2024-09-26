@@ -9,6 +9,10 @@ export const getTasks = async (status, page, limit) => {
   return response.data;
 };
 
+export const getTask = async (id) => {
+  const task = await api.get(`/tasks/${id}`);
+};
+
 export const createTask = async (task) => {
   const response = await api.post('/tasks', task);
   return response.data;
