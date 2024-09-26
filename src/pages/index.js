@@ -12,6 +12,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
+  const [page, setPage] = useState('1');
+  const [limit, setLimit] = useState('30');
   const [search, setSearch] = useState('');
   const [darkMode, setDarkMode] = useState(false); 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -31,11 +33,11 @@ export default function Home() {
 
   useEffect(() => {
     fetchTasks();
-  }, [filter]);
+  }, [filter, page, limit]);
 
   const fetchTasks = async () => {
     try {
-      const data = await getTasks(filter);
+      const data = await getTasks(filter, page, limit);
       setTasks(data);
     } catch (error) {
       console.error(error);
