@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { getTasks, updateTask } from '../../services/api';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Select } from '../../components/ui/select';
 import { useRouter } from 'next/router';
 
 export default function EditTask() {
-  const [task, setTask] = useState({ title: '', description: '', status: 'pending' });
+  const [task, setTask] = useState({ title: '', description: '', status: '0' });
   const router = useRouter();
   const { id } = router.query;
 
@@ -48,14 +47,15 @@ export default function EditTask() {
           />
         </div>
         <div className="mb-4">
-          <Select
+          <Button
             value={task.status}
-            onChange={(e) => setTask({ ...task, status: e.target.value })}
-          >
-            <option value="0">Pendente</option>
-            <option value="1">Em Progresso</option>
-            <option value="2">Completa</option>
-          </Select>
+            onClick={(e) => setTask({ ...task, status: "0" })}>Pendente</Button>
+          <Button
+            value={task.status}
+            onClick={(e) => setTask({ ...task, status: "1" })}>Em Progresso</Button>
+          <Button
+            value={task.status}
+            onClick={(e) => setTask({ ...task, status: "2" })}>Completas</Button>
         </div>
         <Button type="submit">Salvar Alterações</Button>
       </form>
