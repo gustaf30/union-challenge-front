@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from "../components/ui/button"
 import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
-import { Dialog } from "../components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../components/ui/dialog";
 import { Input } from "../components/ui/input"
 import { Select } from "../components/ui/select"
 import { getTasks, deleteTask } from '../services/api';
@@ -90,6 +90,11 @@ export default function Home() {
     setTasks(reorderedTasks); 
   };
 
+  const openDeleteDialog = (taskId) => {
+    setTaskToDelete(taskId); 
+    setDeleteDialogOpen(true); 
+  };
+
   return (
     <div className={`max-w-4xl mx-auto p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-8">
@@ -145,10 +150,7 @@ export default function Home() {
                             </Button>
                             <Button
                               size="sm"
-                              onClick={() => {
-                                setTaskToDelete(task.id);
-                                setDeleteDialogOpen(true);
-                              }}
+                              onClick={() => openDeleteDialog(task.id)}
                               className="bg-red-500 text-white"
                             >
                               Excluir
@@ -164,6 +166,22 @@ export default function Home() {
           )}
         </Droppable>
       </DragDropContext>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent style={{ backgroundColor: '#f0f0f0' }}>
+          <DialogHeader>
+            <DialogTitle>Confirm exclusion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this task?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose>
+              <Button className="bg-blue-500 text-white" >Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleDeleteTask} className="bg-red-500 text-white">Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
