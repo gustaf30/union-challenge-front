@@ -29,7 +29,7 @@ export default function EditTask() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl mb-4">Editar Tarefa</h1>
+      <h1 className="text-2xl mb-4">Edit Task</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
@@ -49,15 +49,15 @@ export default function EditTask() {
         <div className="mb-4">
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "0" })}>Pendente</Button>
+            onClick={(e) => setTask({ ...task, status: "0" })}>Pending</Button>
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "1" })}>Em Progresso</Button>
+            onClick={(e) => setTask({ ...task, status: "1" })}>In progress</Button>
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "2" })}>Completas</Button>
+            onClick={(e) => setTask({ ...task, status: "2" })}>Completed</Button>
         </div>
-        <Button type="submit">Salvar Alterações</Button>
+        <Button type="submit">Save changes</Button>
       </form>
     </div>
   );

@@ -17,7 +17,7 @@ export default function NewTask() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl mb-4">Nova Tarefa</h1>
+      <h1 className="text-2xl mb-4">New Task</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
@@ -34,7 +34,7 @@ export default function NewTask() {
             placeholder="Descrição (Opcional)"
           />
         </div>
-        <Button type="submit">Criar Tarefa</Button>
+        <Button type="submit">Create Task</Button>
       </form>
     </div>
   );
