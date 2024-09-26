@@ -8,12 +8,14 @@ import { Select } from "../components/ui/select"
 import { getTasks, deleteTask } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { ApiError } from 'next/dist/server/api-utils';
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState('1');
-  const [limit, setLimit] = useState('30');
+  const [limit, setLimit] = useState('3');
+  const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
   const [darkMode, setDarkMode] = useState(false); 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -36,6 +38,33 @@ export default function Home() {
   }, [filter, page, limit]);
 
   const fetchTasks = async () => {
+    router.push(`?page=${page}`);
+    try {
+      const data = await getTasks(filter, page, limit);
+      setTasks(data);
+      //setTotalPages( Math.ceil(data.size / parseInt(limit)) );
+      setTotalPages(3);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const nextPage = async () => {
+    setPage(parseInt(page) + 1)
+    router.push(`?page=${page}`);
+    try {
+      const data = await getTasks(filter, page, limit);
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const prevPage = async () => {
+    setPage(parseInt(page) - 1)
+    if (page > 1) {
+      router.push(`?page=${page}`);
+    }
     try {
       const data = await getTasks(filter, page, limit);
       setTasks(data);
@@ -182,6 +211,23 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <div className="flex justify-center items-center py-5">
+        <button
+          onClick={prevPage}
+          disabled={page === 1}
+          className={`px-4 py-2 mr-2 ${page === 1 ? 'bg-blue-600' : 'bg-blue-500 text-white'} rounded-md`}
+        >
+          Previous
+        </button>
+        
+        <button
+          onClick={nextPage}
+          disabled={page === totalPages}
+          className={`px-4 py-2 ml-2 ${page === totalPages ? 'bg-blue-600' : 'bg-blue-500 text-white'} rounded-md`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

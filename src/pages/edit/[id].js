@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTasks, updateTask } from '../../services/api';
+import { getTask, updateTask } from '../../services/api';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useRouter } from 'next/router';
@@ -16,9 +16,9 @@ export default function EditTask() {
   }, [id]);
 
   const fetchTask = async (id) => {
-    const data = await getTasks();
-    const taskToEdit = data.find((t) => t.id === id);
+    const taskToEdit = await getTask(id);
     setTask(taskToEdit);
+    console.log(taskToEdit);
   };
 
   const handleSubmit = async (e) => {
