@@ -23,7 +23,7 @@ export default function NewTask() {
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Título da Tarefa"
+            placeholder="Task Title"
             required
           />
         </div>
@@ -31,7 +31,7 @@ export default function NewTask() {
           <Input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descrição (Opcional)"
+            placeholder="Description (Optional)"
           />
         </div>
         <Button type="submit">Create Task</Button>

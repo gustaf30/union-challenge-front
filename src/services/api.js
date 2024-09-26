@@ -10,7 +10,8 @@ export const getTasks = async (status, page, limit) => {
 };
 
 export const getTask = async (id) => {
-  const task = await api.get(`/tasks/${id}`);
+  const response = await api.get(`/tasks/${id}`);
+  return response.data;
 };
 
 export const createTask = async (task) => {

@@ -33,9 +33,9 @@ export default function EditTask() {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
-            value={task.title}
+            value={task.title ?? ' '}
             onChange={(e) => setTask({ ...task, title: e.target.value })}
-            placeholder="Título da Tarefa"
+            placeholder="Task Title"
             required
           />
         </div>
@@ -43,7 +43,7 @@ export default function EditTask() {
           <Input
             value={task.description}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
-            placeholder="Descrição"
+            placeholder="Description"
           />
         </div>
         <div className="mb-4">
