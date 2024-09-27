@@ -11,6 +11,13 @@ export const getTasks = async (status, page, limit, params = {}) => {
   return response.data;
 };
 
+export const getAllTasks = async (status, page, limit, params = {}) => {
+  const response = await api.get('/tasks', { 
+    params: { status, page, limit, ...params }
+  });
+  return response.data;
+};
+
 export const searchTasksByTitle = async (title) => {
   const response = await api.get(`/tasks/search/${title}`);
   return response.data;

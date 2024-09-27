@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useInsertionEffect, useState } from 'react';
 import { Button } from "../components/ui/button"
 import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
@@ -12,8 +12,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadio
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
+  const [overdue, setOverdue] = useState('false');
   const [page, setPage] = useState('1');
-  const [limit, setLimit] = useState('2');
+  const [limit, setLimit] = useState('5');
   const [totalTasks, setTotalTasks] = useState('');
   const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
@@ -35,14 +36,22 @@ export default function Home() {
 
   useEffect(() => {
     countTasks();
-    if (search) {
-      fetchTasksByTitle();
-    } else {
-      fetchTasks(); 
+  }, []);
+
+  useEffect(() => {
+    if (totalTasks && limit) {
+      const total = Math.ceil(totalTasks / parseInt(limit));
+      setTotalPages(total);
     }
-    const total = Math.ceil(totalTasks / parseInt(limit));
-    setTotalPages(total);
-  }, [filter, page, limit, search]);
+  }, [totalTasks, limit]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [filter, page, limit]);
+
+  useEffect(() => {
+    fetchTasksByTitle();
+  }, [search]);
 
   const countTasks = async () => {
     try {
@@ -54,11 +63,15 @@ export default function Home() {
   }
 
   const fetchTasks = async () => {
-    router.push(`?page=${page}`);
+    router.push(`?page=${page}&limit=${limit}`);
     try {
+      if (filter == '') {
+        const data = await getTasks(filter, page, limit, { overdue: undefined });
+        setTasks(data);
+        return;
+      }
       const data = await getTasks(filter, page, limit);
       setTasks(data);
-
     } catch (error) {
       console.error(error);
     }
@@ -75,8 +88,9 @@ export default function Home() {
   };
 
   const fetchTasksOverdue = async () => {
+    if (!overdue) return;
     try {
-      const data = await getTasks(null, null, null, { overdue: true });
+      const data = await getTasks('', page, limit, { overdue: true });
       setTasks(data);
     } catch (error) {
       console.error(error);
@@ -167,58 +181,69 @@ export default function Home() {
           </a>
         </h1>
         <div className="flex space-x-4">
-          <Button onClick={() => router.push('/new')} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200 ease-in-out">
+          <Button onClick={() => router.push('/new')} className={`${darkMode ? 'bg-blue-950 text-white hover:bg-blue-900' : 'bg-blue-500 text-white hover:bg-blue-600'} px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}>
             New Task
           </Button>
-          <Button onClick={ toggleDarkMode } className={`${darkMode ? 'bg-gray-900 text-white hover:bg-gray-950' : 'bg-gray-200 text-black hover:bg-gray-300'} transition-colors duration-200 ease-in-out`}>
+          <Button onClick={ toggleDarkMode } className={`${darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-200 text-black hover:bg-gray-300'} transition-colors duration-200 ease-in-out`}>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </Button>
         </div>
       </header>
+      
+      <div className="mb-6 flex justify-start flex-wrap">
+        
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('')}>All</Button>
+        <div className='mr-2'></div>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('0')}>Pending</Button>
+        <div className='mr-2'></div>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('1')}>In Progress</Button>
+        <div className='mr-2'></div>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('2')}>Completed</Button>
+        <div className='mr-2'></div>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => {
+          if (overdue == 'false') {
+            setOverdue('true');
+            fetchTasksOverdue();
+          }
+          else {
+            setOverdue('false');
+            fetchTasks();
+          }
+        }}>Overdue</Button>
+        <div className='mr-2'></div>
 
-      <div className="mb-6 flex justify-between">
-      <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('')}>All</Button>
-      <div className='mr-2'></div>
-      <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('0')}>Pending</Button>
-      <div className='mr-2'></div>
-      <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('1')}>In Progress</Button>
-      <div className='mr-2'></div>
-      <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('2')}>Completed</Button>
-      <div className='mr-2'></div>
-      <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={fetchTasksOverdue}>Overdue</Button>
-      <div className='mr-2'></div>
+        <Input
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={`${darkMode ? 'border-blue-900 hover:border-blue-800 text-white' : 'hover:border-gray-500'} w-1/4 border transition-colors duration-200 ease-in-out rounded-md`}
+        />
+        <div className='mr-2'></div>
 
-      <Input
-        placeholder="Search tasks..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-1/4 border hover:border-gray-500 transition-colors duration-200 ease-in-out"
-      />
-      <div className='mr-2'></div>
-
-      <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+            <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'} px-4 py-2 ml-2 rounded-md`}>
               Show
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white">
-            <DropdownMenuLabel>Number of Tasks</DropdownMenuLabel>
+          <DropdownMenuContent className={`${darkMode ? 'bg-blue-950 text-white' : 'bg-white'} px-4 py-2 ml-2 rounded-md`}>
+            <DropdownMenuLabel >Number of Tasks</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={limit} onValueChange={setLimit}>
-              <DropdownMenuRadioItem value="5" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+            <DropdownMenuRadioGroup value={limit} onValueChange={(value) => {
+              setLimit(value);
+            }}>
+              <DropdownMenuRadioItem value="5" className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'} transition-colors duration-200 ease-in-out w-56 rounded-md`}>
                 5
               </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="10" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+              <DropdownMenuRadioItem value="10" className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'} transition-colors duration-200 ease-in-out w-56 rounded-md`}>
                 10
               </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="20" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+              <DropdownMenuRadioItem value="20" className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'} transition-colors duration-200 ease-in-out w-56 rounded-md`}>
                 20
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-
     </div>
 
     <DragDropContext onDragEnd={handleDragEnd}>
@@ -226,7 +251,7 @@ export default function Home() {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {tasks
-                .filter(task => task.title.toLowerCase().includes(search.toLowerCase())) // Filtra pela pesquisa
+                .filter(task => task.title.toLowerCase().includes(search.toLowerCase()))
                 .map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
                     {(provided) => (
@@ -234,20 +259,20 @@ export default function Home() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="shadow-lg p-4 hover:bg-gray-100 transition-colors duration-300 ease-in-out"
+                        className={`${darkMode ? 'bg-gray-950 hover:bg-gray-900' : 'bg-white hover:bg-gray-100'} transition-colors duration-300 ease-in-out shadow-lg p-4`}
                       >
                         <h2 className="text-xl font-semibold mb-2">{task.title}</h2>
                         <p className="text-sm text-gray-600 mb-4">{task.description}</p>
                         <div className="flex justify-between items-center">
                           {renderBadge(task.status)}
                           <div className="flex space-x-2">
-                            <Button size="sm" onClick={() => handleEditTask(task.id)} className="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out">
+                            <Button size="sm" onClick={() => handleEditTask(task.id)} className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900' : 'bg-blue-500 hover:bg-blue-600'} text-white px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}>
                               Edit
                             </Button>
                             <Button
                               size="sm"
                               onClick={() => openDeleteDialog(task.id)}
-                              className="bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 ease-in-out"
+                              className={`${darkMode ? 'bg-red-900 text-white hover:bg-red-800' : 'bg-red-500 text-white hover:bg-red-600'} px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}
                             >
                               Delete
                             </Button>
@@ -263,7 +288,7 @@ export default function Home() {
         </Droppable>
       </DragDropContext>
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent style={{ backgroundColor: '#f0f0f0' }}>
+        <DialogContent className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
           <DialogHeader>
             <DialogTitle>Confirm exclusion</DialogTitle>
             <DialogDescription>
@@ -272,9 +297,9 @@ export default function Home() {
           </DialogHeader>
           <DialogFooter>
             <DialogClose>
-              <Button className="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out" >Cancel</Button>
+              <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900' : 'bg-blue-500 hover:bg-blue-600'} text-white transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}>Cancel</Button>
             </DialogClose>
-            <Button onClick={handleDeleteTask} className="bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 ease-in-out">Confirm</Button>
+            <Button onClick={handleDeleteTask} className={`${darkMode ? 'bg-red-900 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}>Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -282,7 +307,7 @@ export default function Home() {
         <button
           onClick={prevPage}
           disabled={page === 1}
-          className={`px-4 py-2 mr-2 ${page === 1 ? 'bg-blue-600' : 'bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out'} px-4 py-2 rounded-md`}
+          className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900' : 'bg-blue-500 hover:bg-blue-600'} text-white transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
         >
           Previous
         </button>
@@ -290,7 +315,7 @@ export default function Home() {
         <button
           onClick={nextPage}
           disabled={page === totalPages}
-          className={`px-4 py-2 ml-2 ${page === totalPages ? 'bg-blue-600' : 'bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out'} px-4 py-2 rounded-md`}
+          className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900' : 'bg-blue-500 hover:bg-blue-600'} text-white transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
         >
           Next
         </button>

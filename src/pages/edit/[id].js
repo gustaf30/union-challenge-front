@@ -41,7 +41,7 @@ export default function EditTask() {
 
   return (
     <div className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <h1 className="text-2xl mb-4">EDIT TASK</h1>
+      <h2 className="text-2xl mb-4 font-bold">Edit Task</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
@@ -55,6 +55,7 @@ export default function EditTask() {
           <Input
             value={task.description}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
+            className="w-1/3 border hover:border-gray-500"
             placeholder="Description"
           />
         </div>
