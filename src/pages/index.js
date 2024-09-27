@@ -4,7 +4,7 @@ import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../components/ui/dialog";
 import { Input } from "../components/ui/input"
-import { getTasks, deleteTask } from '../services/api';
+import { getTasks, deleteTask, searchTasksByTitle } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -12,7 +12,7 @@ export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState('1');
-  const [limit, setLimit] = useState('3');
+  const [limit, setLimit] = useState('2');
   const [totalTasks, setTotalTasks] = useState('');
   const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
@@ -34,10 +34,14 @@ export default function Home() {
 
   useEffect(() => {
     countTasks();
-    fetchTasks();
+    if (search) {
+      fetchTasksByTitle();
+    } else {
+      fetchTasks(); 
+    }
     const total = Math.ceil(totalTasks / parseInt(limit));
     setTotalPages(total);
-  }, [filter, page, limit]);
+  }, [filter, page, limit, search]);
 
   const countTasks = async () => {
     try {
@@ -54,6 +58,25 @@ export default function Home() {
       const data = await getTasks(filter, page, limit);
       setTasks(data);
 
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTasksByTitle = async () => {
+    if (!search) return; 
+    try {
+      const data = await searchTasksByTitle(search); 
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTasksOverdue = async () => {
+    try {
+      const data = await getTasks(null, null, null, { overdue: true });
+      setTasks(data);
     } catch (error) {
       console.error(error);
     }
@@ -135,7 +158,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`max-w-4xl mx-auto p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+    <div className={`flex flex-col min-h-screen w-full p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">To do List</h1>
         <div className="flex space-x-4">
@@ -149,36 +172,36 @@ export default function Home() {
       </header>
 
       <div className="mb-6 flex justify-between">
-        
-        <Button onClick={() => setFilter('')}>All</Button>
-        <Button onClick={() => setFilter('0')}>Pending</Button>
-        <Button onClick={() => setFilter('1')}>In Progress</Button>
-        <Button onClick={() => setFilter('2')}>Completed</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) + 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View +</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) - 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View -</Button>
-        
-        <Input
-          placeholder="Search tasks..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-2/3"
-        />
-      </div>
+      <Button onClick={() => setFilter('')}>All</Button>
+      <Button onClick={() => setFilter('0')}>Pending</Button>
+      <Button onClick={() => setFilter('1')}>In Progress</Button>
+      <Button onClick={() => setFilter('2')}>Completed</Button>
+      <Button onClick={fetchTasksOverdue}>Overdue</Button>
+      <Button onClick={() => {
+        setLimit(parseInt(limit) + 1);
+        const total = Math.ceil(totalTasks / parseInt(limit));
+        setTotalPages(total);
+      }}>View +</Button>
+      <Button onClick={() => {
+        setLimit(parseInt(limit) - 1);
+        const total = Math.ceil(totalTasks / parseInt(limit));
+        setTotalPages(total);
+      }}>View -</Button>
+
+      <Input
+        placeholder="Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-2/3"
+      />
+    </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="tasksList">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {tasks
-                .filter(task => task.title.toLowerCase().includes(search.toLowerCase())) // Filtra pela pesquisa
+                .filter(task => task.title.toLowerCase().includes(search.toLowerCase()))
                 .map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
                     {(provided) => (
@@ -230,7 +253,7 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex justify-center items-center py-5">
+      <div className="flex justify-center items-center mt-8">
         <button
           onClick={prevPage}
           disabled={page === 1}
