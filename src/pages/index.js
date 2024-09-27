@@ -4,7 +4,7 @@ import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../components/ui/dialog";
 import { Input } from "../components/ui/input"
-import { getTasks, deleteTask } from '../services/api';
+import { getTasks, deleteTask, searchTasksByTitle } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -34,10 +34,14 @@ export default function Home() {
 
   useEffect(() => {
     countTasks();
-    fetchTasks();
+    if (search) {
+      fetchTasksByTitle();
+    } else {
+      fetchTasks(); 
+    }
     const total = Math.ceil(totalTasks / parseInt(limit));
     setTotalPages(total);
-  }, [filter, page, limit]);
+  }, [filter, page, limit, search]);
 
   const countTasks = async () => {
     try {
@@ -54,6 +58,16 @@ export default function Home() {
       const data = await getTasks(filter, page, limit);
       setTasks(data);
 
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTasksByTitle = async () => {
+    if (!search) return; 
+    try {
+      const data = await searchTasksByTitle(search); 
+      setTasks(data);
     } catch (error) {
       console.error(error);
     }
