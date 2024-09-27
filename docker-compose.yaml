@@ -1,0 +1,14 @@
+services:
+  task-front-end:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: task-front-end
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3000
