@@ -64,7 +64,6 @@ export default function EditTask() {
             value={task.dueDate ?? ''}
             onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
             placeholder="Due Date"
-            required
           />
         </div>
         <div className="mb-4 flex justify-center">
