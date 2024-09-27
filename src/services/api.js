@@ -9,6 +9,11 @@ export const getTasks = async (status, page, limit) => {
   return response.data;
 };
 
+export const searchTasksByTitle = async (title) => {
+  const response = await api.get(`/tasks/search/${title}`);
+  return response.data;
+};
+
 export const getTask = async (id) => {
   const response = await api.get(`/tasks/${id}`);
   return response.data;
