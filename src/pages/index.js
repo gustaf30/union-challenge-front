@@ -201,7 +201,7 @@ export default function Home() {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {tasks
-                .filter(task => task.title.toLowerCase().includes(search.toLowerCase())) // Filtra pela pesquisa
+                .filter(task => task.title.toLowerCase().includes(search.toLowerCase()))
                 .map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
                     {(provided) => (

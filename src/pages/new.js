@@ -7,12 +7,12 @@ import { useRouter } from 'next/router';
 export default function NewTask() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState(''); // Adicione isso
+  const [dueDate, setDueDate] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createTask({ title, description, dueDate }); // Envie dueDate aqui
+    await createTask({ title, description, dueDate }); 
     router.push('/');
   };
 
