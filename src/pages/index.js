@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useInsertionEffect, useState } from 'react';
 import { Button } from "../components/ui/button"
 import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadio
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
+  const [overdue, setOverdue] = useState('false');
   const [page, setPage] = useState('1');
   const [limit, setLimit] = useState('5');
   const [totalTasks, setTotalTasks] = useState('');
@@ -35,7 +36,7 @@ export default function Home() {
 
   useEffect(() => {
     countTasks();
-  },);
+  }, []);
 
   useEffect(() => {
     if (totalTasks && limit) {
@@ -45,12 +46,12 @@ export default function Home() {
   }, [totalTasks, limit]);
 
   useEffect(() => {
-    if (search) {
-      fetchTasksByTitle();
-    } else {
-      fetchTasks(); 
-    }
-  }, [filter, page, limit, search]);
+    fetchTasks();
+  }, [filter, page, limit]);
+
+  useEffect(() => {
+    fetchTasksByTitle();
+  }, [search]);
 
   const countTasks = async () => {
     try {
@@ -64,6 +65,11 @@ export default function Home() {
   const fetchTasks = async () => {
     router.push(`?page=${page}&limit=${limit}`);
     try {
+      if (filter == '') {
+        const data = await getTasks(filter, page, limit, { overdue: undefined });
+        setTasks(data);
+        return;
+      }
       const data = await getTasks(filter, page, limit);
       setTasks(data);
     } catch (error) {
@@ -82,8 +88,9 @@ export default function Home() {
   };
 
   const fetchTasksOverdue = async () => {
+    if (!overdue) return;
     try {
-      const data = await getTasks(null, null, null, { overdue: true });
+      const data = await getTasks('', page, limit, { overdue: true });
       setTasks(data);
     } catch (error) {
       console.error(error);
@@ -193,7 +200,16 @@ export default function Home() {
         <div className='mr-2'></div>
         <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('2')}>Completed</Button>
         <div className='mr-2'></div>
-        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={{fetchTasksOverdue}}>Overdue</Button>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => {
+          if (overdue == 'false') {
+            setOverdue('true');
+            fetchTasksOverdue();
+          }
+          else {
+            setOverdue('false');
+            fetchTasks();
+          }
+        }}>Overdue</Button>
         <div className='mr-2'></div>
 
         <Input
@@ -228,7 +244,6 @@ export default function Home() {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
     </div>
 
     <DragDropContext onDragEnd={handleDragEnd}>
