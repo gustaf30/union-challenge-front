@@ -73,6 +73,15 @@ export default function Home() {
     }
   };
 
+  const fetchTasksOverdue = async () => {
+    try {
+      const data = await getTasks(null, null, null, { overdue: true });
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const nextPage = async () => {
     setPage(parseInt(page) + 1)
     router.push(`?page=${page}`);
@@ -163,29 +172,29 @@ export default function Home() {
       </header>
 
       <div className="mb-6 flex justify-between">
-        
-        <Button onClick={() => setFilter('')}>All</Button>
-        <Button onClick={() => setFilter('0')}>Pending</Button>
-        <Button onClick={() => setFilter('1')}>In Progress</Button>
-        <Button onClick={() => setFilter('2')}>Completed</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) + 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View +</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) - 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View -</Button>
-        
-        <Input
-          placeholder="Search tasks..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-2/3"
-        />
-      </div>
+      <Button onClick={() => setFilter('')}>All</Button>
+      <Button onClick={() => setFilter('0')}>Pending</Button>
+      <Button onClick={() => setFilter('1')}>In Progress</Button>
+      <Button onClick={() => setFilter('2')}>Completed</Button>
+      <Button onClick={fetchTasksOverdue}>Overdue</Button>
+      <Button onClick={() => {
+        setLimit(parseInt(limit) + 1);
+        const total = Math.ceil(totalTasks / parseInt(limit));
+        setTotalPages(total);
+      }}>View +</Button>
+      <Button onClick={() => {
+        setLimit(parseInt(limit) - 1);
+        const total = Math.ceil(totalTasks / parseInt(limit));
+        setTotalPages(total);
+      }}>View -</Button>
+
+      <Input
+        placeholder="Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-2/3"
+      />
+    </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="tasksList">

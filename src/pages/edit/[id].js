@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/input';
 import { useRouter } from 'next/router';
 
 export default function EditTask() {
-  const [task, setTask] = useState({ title: '', description: '', status: '0' });
+  const [task, setTask] = useState({ title: '', description: '', dueDate: '', status: '0' });
   const router = useRouter();
   const { id } = router.query;
 
@@ -18,7 +18,6 @@ export default function EditTask() {
   const fetchTask = async (id) => {
     const taskToEdit = await getTask(id);
     setTask(taskToEdit);
-    console.log(taskToEdit);
   };
 
   const handleSubmit = async (e) => {
@@ -47,15 +46,18 @@ export default function EditTask() {
           />
         </div>
         <div className="mb-4">
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "0" })}>Pending</Button>
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "1" })}>In progress</Button>
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "2" })}>Completed</Button>
+          <Input
+            type="date"
+            value={task.dueDate ?? ''}
+            onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+            placeholder="Due Date"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <Button onClick={() => setTask({ ...task, status: "0" })}>Pending</Button>
+          <Button onClick={() => setTask({ ...task, status: "1" })}>In progress</Button>
+          <Button onClick={() => setTask({ ...task, status: "2" })}>Completed</Button>
         </div>
         <Button type="submit">Save changes</Button>
       </form>
