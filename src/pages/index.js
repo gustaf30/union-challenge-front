@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input"
 import { getTasks, deleteTask, searchTasksByTitle } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
@@ -151,40 +152,63 @@ export default function Home() {
   return (
     <div className={`flex flex-col min-h-screen w-full p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">To do List</h1>
+        <h1 className="text-3xl font-bold">
+          <a href='./'>
+            To do List
+          </a>
+        </h1>
         <div className="flex space-x-4">
-          <Button onClick={() => router.push('/new')} className="bg-blue-500 text-white px-4 py-2 rounded-md">
+          <Button onClick={() => router.push('/new')} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200 ease-in-out">
             New Task
           </Button>
-          <Button onClick={toggleDarkMode} className="bg-gray-500 text-white px-4 py-2 rounded-md">
+          <Button onClick={ toggleDarkMode } className={`${darkMode ? 'bg-gray-900 text-white hover:bg-gray-950' : 'bg-gray-200 text-black hover:bg-gray-300'} transition-colors duration-200 ease-in-out`}>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </Button>
         </div>
       </header>
 
-      <div className="mb-6 flex justify-between">
+      <div className="mb-6 flex justify-start flex-wrap">
         
-        <Button onClick={() => setFilter('')}>All</Button>
-        <Button onClick={() => setFilter('0')}>Pending</Button>
-        <Button onClick={() => setFilter('1')}>In Progress</Button>
-        <Button onClick={() => setFilter('2')}>Completed</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) + 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View +</Button>
-        <Button onClick={() => {
-          setLimit( parseInt(limit) - 1 )
-          const total = Math.ceil(totalTasks / parseInt(limit));
-          setTotalPages(total);
-        }}>View -</Button>
-        
+        <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('')}>All</Button>
+        <div className='mr-2'></div>
+        <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('0')}>Pending</Button>
+        <div className='mr-2'></div>
+        <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('1')}>In Progress</Button>
+        <div className='mr-2'></div>
+        <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('2')}>Completed</Button>
+        <div className='mr-2'></div>
+
         <Input
           placeholder="Search tasks..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-2/3"
+          className="w-1/4 border hover:border-gray-500 transition-colors duration-200 ease-in-out"
         />
+        <div className='mr-2'></div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+              Show
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white">
+            <DropdownMenuLabel>Number of Tasks</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup value={limit} onValueChange={setLimit}>
+              <DropdownMenuRadioItem value="5" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                5
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="10" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                10
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="20" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                20
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -200,20 +224,20 @@ export default function Home() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="shadow-lg p-4"
+                        className="shadow-lg p-4 hover:bg-gray-100 transition-colors duration-300 ease-in-out"
                       >
                         <h2 className="text-xl font-semibold mb-2">{task.title}</h2>
                         <p className="text-sm text-gray-600 mb-4">{task.description}</p>
                         <div className="flex justify-between items-center">
                           {renderBadge(task.status)}
                           <div className="flex space-x-2">
-                            <Button size="sm" onClick={() => handleEditTask(task.id)} className="bg-blue-500 text-white">
+                            <Button size="sm" onClick={() => handleEditTask(task.id)} className="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out">
                               Edit
                             </Button>
                             <Button
                               size="sm"
                               onClick={() => openDeleteDialog(task.id)}
-                              className="bg-red-500 text-white"
+                              className="bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 ease-in-out"
                             >
                               Delete
                             </Button>
@@ -238,17 +262,17 @@ export default function Home() {
           </DialogHeader>
           <DialogFooter>
             <DialogClose>
-              <Button className="bg-blue-500 text-white" >Cancel</Button>
+              <Button className="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out" >Cancel</Button>
             </DialogClose>
-            <Button onClick={handleDeleteTask} className="bg-red-500 text-white">Confirm</Button>
+            <Button onClick={handleDeleteTask} className="bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 ease-in-out">Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex justify-center items-center mt-8">
+      <div className="mt-auto flex justify-center items-center py-5">
         <button
           onClick={prevPage}
           disabled={page === 1}
-          className={`px-4 py-2 mr-2 ${page === 1 ? 'bg-blue-600' : 'bg-blue-500 text-white'} px-4 py-2 rounded-md`}
+          className={`px-4 py-2 mr-2 ${page === 1 ? 'bg-blue-600' : 'bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out'} px-4 py-2 rounded-md`}
         >
           Previous
         </button>
@@ -256,7 +280,7 @@ export default function Home() {
         <button
           onClick={nextPage}
           disabled={page === totalPages}
-          className={`px-4 py-2 ml-2 ${page === totalPages ? 'bg-blue-600' : 'bg-blue-500 text-white'} px-4 py-2 rounded-md`}
+          className={`px-4 py-2 ml-2 ${page === totalPages ? 'bg-blue-600' : 'bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 ease-in-out'} px-4 py-2 rounded-md`}
         >
           Next
         </button>
