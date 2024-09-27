@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTasks, updateTask } from '../../services/api';
+import { getTask, updateTask } from '../../services/api';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useRouter } from 'next/router';
@@ -16,9 +16,9 @@ export default function EditTask() {
   }, [id]);
 
   const fetchTask = async (id) => {
-    const data = await getTasks();
-    const taskToEdit = data.find((t) => t.id === id);
+    const taskToEdit = await getTask(id);
     setTask(taskToEdit);
+    console.log(taskToEdit);
   };
 
   const handleSubmit = async (e) => {
@@ -29,13 +29,13 @@ export default function EditTask() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl mb-4">Editar Tarefa</h1>
+      <h1 className="text-2xl mb-4">Edit Task</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
-            value={task.title}
+            value={task.title ?? ' '}
             onChange={(e) => setTask({ ...task, title: e.target.value })}
-            placeholder="Título da Tarefa"
+            placeholder="Task Title"
             required
           />
         </div>
@@ -43,21 +43,21 @@ export default function EditTask() {
           <Input
             value={task.description}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
-            placeholder="Descrição"
+            placeholder="Description"
           />
         </div>
         <div className="mb-4">
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "0" })}>Pendente</Button>
+            onClick={(e) => setTask({ ...task, status: "0" })}>Pending</Button>
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "1" })}>Em Progresso</Button>
+            onClick={(e) => setTask({ ...task, status: "1" })}>In progress</Button>
           <Button
             value={task.status}
-            onClick={(e) => setTask({ ...task, status: "2" })}>Completas</Button>
+            onClick={(e) => setTask({ ...task, status: "2" })}>Completed</Button>
         </div>
-        <Button type="submit">Salvar Alterações</Button>
+        <Button type="submit">Save changes</Button>
       </form>
     </div>
   );

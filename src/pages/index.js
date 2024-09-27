@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Button } from "../components/ui/button"
 import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
-import { Dialog } from "../components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../components/ui/dialog";
 import { Input } from "../components/ui/input"
-import { Select } from "../components/ui/select"
 import { getTasks, deleteTask } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -12,6 +11,10 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
+  const [page, setPage] = useState('1');
+  const [limit, setLimit] = useState('3');
+  const [totalTasks, setTotalTasks] = useState('');
+  const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
   const [darkMode, setDarkMode] = useState(false); 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -30,12 +33,50 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    countTasks();
     fetchTasks();
-  }, [filter]);
+    const total = Math.ceil(totalTasks / parseInt(limit));
+    setTotalPages(total);
+  }, [filter, page, limit]);
+
+  const countTasks = async () => {
+    try {
+      const allData = await getTasks();
+      setTotalTasks(allData.length);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const fetchTasks = async () => {
+    router.push(`?page=${page}`);
     try {
-      const data = await getTasks(filter);
+      const data = await getTasks(filter, page, limit);
+      setTasks(data);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const nextPage = async () => {
+    setPage(parseInt(page) + 1)
+    router.push(`?page=${page}`);
+    try {
+      const data = await getTasks(filter, page, limit);
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const prevPage = async () => {
+    setPage(parseInt(page) - 1)
+    if (page > 1) {
+      router.push(`?page=${page}`);
+    }
+    try {
+      const data = await getTasks(filter, page, limit);
       setTasks(data);
     } catch (error) {
       console.error(error);
@@ -59,11 +100,11 @@ export default function Home() {
   const renderBadge = (status) => {
     switch (status) {
       case '0':
-        return <Badge color='yellow'>Pendente</Badge>;
+        return <Badge color='yellow'>Pending</Badge>;
       case '1':
-        return <Badge color="blue">Em Progresso</Badge>;
+        return <Badge color="blue">In Progress</Badge>;
       case '2':
-        return <Badge color="green">Concluída</Badge>;
+        return <Badge color="green">Completed</Badge>;
       default:
         return null;
     }
@@ -88,30 +129,44 @@ export default function Home() {
     setTasks(reorderedTasks); 
   };
 
+  const openDeleteDialog = (taskId) => {
+    setTaskToDelete(taskId); 
+    setDeleteDialogOpen(true); 
+  };
+
   return (
     <div className={`max-w-4xl mx-auto p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Lista de Tarefas</h1>
+        <h1 className="text-3xl font-bold">To do List</h1>
         <div className="flex space-x-4">
           <Button onClick={() => router.push('/new')} className="bg-blue-500 text-white px-4 py-2 rounded-md">
-            Nova Tarefa
+            New Task
           </Button>
           <Button onClick={toggleDarkMode} className="bg-gray-500 text-white px-4 py-2 rounded-md">
-            {darkMode ? 'Modo Claro' : 'Modo Escuro'}
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
           </Button>
         </div>
       </header>
 
       <div className="mb-6 flex justify-between">
         
-        <Button onClick={() => setFilter('')}>Todas</Button>
-        <Button onClick={() => setFilter('0')}>Pendentes</Button>
-        <Button onClick={() => setFilter('1')}>Em Progresso</Button>
-        <Button onClick={() => setFilter('2')}>Completas</Button>
-        
+        <Button onClick={() => setFilter('')}>All</Button>
+        <Button onClick={() => setFilter('0')}>Pending</Button>
+        <Button onClick={() => setFilter('1')}>In Progress</Button>
+        <Button onClick={() => setFilter('2')}>Completed</Button>
+        <Button onClick={() => {
+          setLimit( parseInt(limit) + 1 )
+          const total = Math.ceil(totalTasks / parseInt(limit));
+          setTotalPages(total);
+        }}>View +</Button>
+        <Button onClick={() => {
+          setLimit( parseInt(limit) - 1 )
+          const total = Math.ceil(totalTasks / parseInt(limit));
+          setTotalPages(total);
+        }}>View -</Button>
         
         <Input
-          placeholder="Pesquisar tarefas..."
+          placeholder="Search tasks..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-2/3"
@@ -139,17 +194,14 @@ export default function Home() {
                           {renderBadge(task.status)}
                           <div className="flex space-x-2">
                             <Button size="sm" onClick={() => handleEditTask(task.id)} className="bg-blue-500 text-white">
-                              Editar
+                              Edit
                             </Button>
                             <Button
                               size="sm"
-                              onClick={() => {
-                                setTaskToDelete(task.id);
-                                setDeleteDialogOpen(true);
-                              }}
+                              onClick={() => openDeleteDialog(task.id)}
                               className="bg-red-500 text-white"
                             >
-                              Excluir
+                              Delete
                             </Button>
                           </div>
                         </div>
@@ -162,6 +214,39 @@ export default function Home() {
           )}
         </Droppable>
       </DragDropContext>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent style={{ backgroundColor: '#f0f0f0' }}>
+          <DialogHeader>
+            <DialogTitle>Confirm exclusion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this task?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose>
+              <Button className="bg-blue-500 text-white" >Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleDeleteTask} className="bg-red-500 text-white">Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="flex justify-center items-center py-5">
+        <button
+          onClick={prevPage}
+          disabled={page === 1}
+          className={`px-4 py-2 mr-2 ${page === 1 ? 'bg-blue-600' : 'bg-blue-500 text-white'} px-4 py-2 rounded-md`}
+        >
+          Previous
+        </button>
+        
+        <button
+          onClick={nextPage}
+          disabled={page === totalPages}
+          className={`px-4 py-2 ml-2 ${page === totalPages ? 'bg-blue-600' : 'bg-blue-500 text-white'} px-4 py-2 rounded-md`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

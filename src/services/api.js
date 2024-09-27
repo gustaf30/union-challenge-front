@@ -4,8 +4,13 @@ const api = axios.create({
   baseURL: 'http://localhost:3000',
 });
 
-export const getTasks = async (status) => {
-  const response = await api.get('/tasks', { params: { status } });
+export const getTasks = async (status, page, limit) => {
+  const response = await api.get('/tasks', { params: { status, page, limit } });
+  return response.data;
+};
+
+export const getTask = async (id) => {
+  const response = await api.get(`/tasks/${id}`);
   return response.data;
 };
 

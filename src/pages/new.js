@@ -17,13 +17,13 @@ export default function NewTask() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl mb-4">Nova Tarefa</h1>
+      <h1 className="text-2xl mb-4">New Task</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Título da Tarefa"
+            placeholder="Task Title"
             required
           />
         </div>
@@ -31,10 +31,10 @@ export default function NewTask() {
           <Input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descrição (Opcional)"
+            placeholder="Description (Optional)"
           />
         </div>
-        <Button type="submit">Criar Tarefa</Button>
+        <Button type="submit">Create Task</Button>
       </form>
     </div>
   );
