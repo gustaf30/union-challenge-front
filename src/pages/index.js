@@ -230,7 +230,7 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex justify-center items-center mt-8">
+      <div className="mt-auto flex justify-center items-center py-5">
         <button
           onClick={prevPage}
           disabled={page === 1}
