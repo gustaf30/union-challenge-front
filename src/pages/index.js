@@ -13,7 +13,7 @@ export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState('1');
-  const [limit, setLimit] = useState('2');
+  const [limit, setLimit] = useState('5');
   const [totalTasks, setTotalTasks] = useState('');
   const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
@@ -35,9 +35,17 @@ export default function Home() {
 
   useEffect(() => {
     countTasks();
+  },);
+
+  useEffect(() => {
+    if (totalTasks && limit) {
+      const total = Math.ceil(totalTasks / parseInt(limit));
+      setTotalPages(total);
+    }
+  }, [totalTasks, limit]);
+
+  useEffect(() => {
     fetchTasks();
-    const total = Math.ceil(totalTasks / parseInt(limit));
-    setTotalPages(total);
   }, [filter, page, limit]);
 
   const countTasks = async () => {
@@ -50,11 +58,10 @@ export default function Home() {
   }
 
   const fetchTasks = async () => {
-    router.push(`?page=${page}`);
+    router.push(`?page=${page}&limit=${limit}`);
     try {
       const data = await getTasks(filter, page, limit);
       setTasks(data);
-
     } catch (error) {
       console.error(error);
     }
@@ -181,7 +188,9 @@ export default function Home() {
           <DropdownMenuContent className={`${darkMode ? 'bg-blue-950 text-white' : 'bg-white'} px-4 py-2 ml-2 rounded-md`}>
             <DropdownMenuLabel >Number of Tasks</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={limit} onValueChange={setLimit}>
+            <DropdownMenuRadioGroup value={limit} onValueChange={(value) => {
+              setLimit(value);
+            }}>
               <DropdownMenuRadioItem value="5" className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'} transition-colors duration-200 ease-in-out w-56 rounded-md`}>
                 5
               </DropdownMenuRadioItem>
