@@ -74,6 +74,15 @@ export default function Home() {
     }
   };
 
+  const fetchTasksOverdue = async () => {
+    try {
+      const data = await getTasks(null, null, null, { overdue: true });
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const nextPage = async () => {
     setPage(parseInt(page) + 1)
     router.push(`?page=${page}`);
@@ -177,6 +186,7 @@ export default function Home() {
         <div className='mr-2'></div>
         <Button className='hover:bg-gray-100 transition-colors duration-200 ease-in-out' onClick={() => setFilter('2')}>Completed</Button>
         <div className='mr-2'></div>
+        <Button className='hover:bg-gray-100-transition-colors duration-200 ease-in-out' onClick={fetchTasksOverdue}>Overdue</Button>
 
         <Input
           placeholder="Search tasks..."
@@ -216,7 +226,7 @@ export default function Home() {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {tasks
-                .filter(task => task.title.toLowerCase().includes(search.toLowerCase())) // Filtra pela pesquisa
+                .filter(task => task.title.toLowerCase().includes(search.toLowerCase()))
                 .map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
                     {(provided) => (

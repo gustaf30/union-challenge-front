@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function EditTask() {
-  const [task, setTask] = useState({ title: '', description: '', status: '0' });
+  const [task, setTask] = useState({ title: '', description: '', dueDate: '', status: '0' });
   const router = useRouter();
   const { id } = router.query;
   const [darkMode, setDarkMode] = useState(false);
@@ -31,7 +31,6 @@ export default function EditTask() {
   const fetchTask = async (id) => {
     const taskToEdit = await getTask(id);
     setTask(taskToEdit);
-    console.log(taskToEdit);
   };
 
   const handleSubmit = async (e) => {
@@ -59,6 +58,16 @@ export default function EditTask() {
             placeholder="Description"
           />
         </div>
+         <div className="mb-4">
+          <Input
+            type="date"
+            value={task.dueDate ?? ''}
+            onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+            placeholder="Due Date"
+            required
+          />
+        </div>
+        
         <div className="mb-4 flex justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

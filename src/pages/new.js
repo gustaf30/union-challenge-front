@@ -7,11 +7,12 @@ import { useRouter } from 'next/router';
 export default function NewTask() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createTask({ title, description });
+    await createTask({ title, description, dueDate }); 
     router.push('/');
   };
 
@@ -32,6 +33,14 @@ export default function NewTask() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description (Optional)"
+          />
+        </div>
+        <div className="mb-4">
+          <Input
+            type="date" // Campo de data
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            placeholder="Due Date"
           />
         </div>
         <Button type="submit">Create Task</Button>
