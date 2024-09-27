@@ -12,7 +12,7 @@ export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState('1');
-  const [limit, setLimit] = useState('3');
+  const [limit, setLimit] = useState('2');
   const [totalTasks, setTotalTasks] = useState('');
   const [totalPages, setTotalPages] = useState('')
   const [search, setSearch] = useState('');
@@ -135,7 +135,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`max-w-4xl mx-auto p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+    <div className={`flex flex-col min-h-screen w-full p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">To do List</h1>
         <div className="flex space-x-4">
@@ -230,7 +230,7 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex justify-center items-center py-5">
+      <div className="flex justify-center items-center mt-8">
         <button
           onClick={prevPage}
           disabled={page === 1}
