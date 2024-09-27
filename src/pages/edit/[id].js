@@ -41,8 +41,8 @@ export default function EditTask() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl mb-4">Edit Task</h1>
+    <div className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+      <h1 className="text-2xl mb-4">EDIT TASK</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <Input
@@ -56,23 +56,48 @@ export default function EditTask() {
           <Input
             value={task.description}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
-            className="w-1/3 border hover:border-gray-500"
             placeholder="Description"
           />
         </div>
-        <div className="mb-4">
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "0" })}>Pending</Button>
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "1" })}>In progress</Button>
-          <Button
-            value={task.status}
-            onClick={(e) => setTask({ ...task, status: "2" })}>Completed</Button>
+        <div className="mb-4 flex justify-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+              Status
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white">
+            <DropdownMenuLabel>Select status</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup>
+              <DropdownMenuRadioItem value={task.status}
+            onClick={(e) => setTask({ ...task, status: "0" })}
+             className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                Pending
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value={task.status}
+            onClick={(e) => setTask({ ...task, status: "1" })} className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                In progress
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value={task.status}
+            onClick={(e) => setTask({ ...task, status: "2" })} className="hover:bg-gray-100 transition-colors duration-200 ease-in-out">
+                Completed
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
         </div>
-        <Button type="submit">Save changes</Button>
+        <div className="flex justify-center">
+        <Button type="submit" variant="outline"
+        className="hover:bg-slate-400 transition-colors duration-200 ease-in-out"
+        >Save changes</Button>
+        </div>
       </form>
+
+      <div className='mr-2'></div>
+
+        
+
     </div>
   );
 }
