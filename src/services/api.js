@@ -4,8 +4,15 @@ const api = axios.create({
   baseURL: 'http://localhost:3000',
 });
 
-export const getTasks = async (status, page, limit) => {
-  const response = await api.get('/tasks', { params: { status, page, limit } });
+export const getTasks = async (status, page, limit, params = {}) => {
+  const response = await api.get('/tasks', { 
+    params: { status, page, limit, ...params }
+  });
+  return response.data;
+};
+
+export const searchTasksByTitle = async (title) => {
+  const response = await api.get(`/tasks/search/${title}`);
   return response.data;
 };
 

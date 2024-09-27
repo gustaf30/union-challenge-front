@@ -4,7 +4,7 @@ import { Card } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../components/ui/dialog";
 import { Input } from "../components/ui/input"
-import { getTasks, deleteTask } from '../services/api';
+import { getTasks, deleteTask, searchTasksByTitle } from '../services/api';
 import { useRouter } from 'next/router';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -45,8 +45,12 @@ export default function Home() {
   }, [totalTasks, limit]);
 
   useEffect(() => {
-    fetchTasks();
-  }, [filter, page, limit]);
+    if (search) {
+      fetchTasksByTitle();
+    } else {
+      fetchTasks(); 
+    }
+  }, [filter, page, limit, search]);
 
   const countTasks = async () => {
     try {
@@ -61,6 +65,25 @@ export default function Home() {
     router.push(`?page=${page}&limit=${limit}`);
     try {
       const data = await getTasks(filter, page, limit);
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTasksByTitle = async () => {
+    if (!search) return; 
+    try {
+      const data = await searchTasksByTitle(search); 
+      setTasks(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTasksOverdue = async () => {
+    try {
+      const data = await getTasks(null, null, null, { overdue: true });
       setTasks(data);
     } catch (error) {
       console.error(error);
@@ -159,7 +182,7 @@ export default function Home() {
           </Button>
         </div>
       </header>
-
+      
       <div className="mb-6 flex justify-start flex-wrap">
         
         <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('')}>All</Button>
@@ -169,6 +192,8 @@ export default function Home() {
         <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('1')}>In Progress</Button>
         <div className='mr-2'></div>
         <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={() => setFilter('2')}>Completed</Button>
+        <div className='mr-2'></div>
+        <Button className={`${darkMode ? 'bg-blue-950 hover:bg-blue-900 text-white' : 'bg-white hover:bg-gray-100'}  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`} onClick={{fetchTasksOverdue}}>Overdue</Button>
         <div className='mr-2'></div>
 
         <Input
@@ -203,10 +228,10 @@ export default function Home() {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-
       </div>
+    </div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="tasksList">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
