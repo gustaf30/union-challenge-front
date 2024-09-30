@@ -12,18 +12,18 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Task, TaskStatus } from '../../lib/task.types';  // Importando o tipo correto
+import { Task, TaskStatus } from '../../lib/task.types'; 
 
 export default function EditTask() {
   const [task, setTask] = useState<Task>({
     id: '',             
     title: '',
     description: '',
-    dueDate: undefined,  // Definindo como opcional
-    status: TaskStatus.PENDING,  // Usando o enum
-    createdAt: new Date(),  // Inicializando com a data atual
-    updatedAt: new Date(),  // Inicializando com a data atual
-    deletedAt: undefined,  // Definindo como opcional
+    dueDate: undefined,
+    status: TaskStatus.PENDING, 
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: undefined, 
   });
   
   const router = useRouter();
@@ -49,18 +49,17 @@ export default function EditTask() {
 
   const fetchTask = async (id: string) => {
     const taskToEdit: Task = await getTask(id);
-    
-    // Verifica se dueDate é uma string e converte para Date
+
     const dueDate = typeof taskToEdit.dueDate === 'string' ? new Date(taskToEdit.dueDate) : taskToEdit.dueDate;
   
     setTask({
       ...taskToEdit,
-      description: taskToEdit.description ?? '',  // Garantindo valores padrão
+      description: taskToEdit.description ?? '',
       dueDate: dueDate ?? undefined,
       deletedAt: taskToEdit.deletedAt ?? undefined,
     });
   };
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await updateTask(id, task);
@@ -90,7 +89,7 @@ export default function EditTask() {
         <div className="mb-4">
           <Input
             type="date"
-            value={task.dueDate ? task.dueDate.toISOString().split('T')[0] : ''}  // Convertendo para string
+            value={task.dueDate ? task.dueDate.toISOString().split('T')[0] : ''} 
             onChange={(e) => setTask({ ...task, dueDate: new Date(e.target.value) })}
             placeholder="Due Date"
           />
