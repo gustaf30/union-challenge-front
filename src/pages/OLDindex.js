@@ -263,6 +263,7 @@ export default function Home() {
                       >
                         <h2 className="text-xl font-semibold mb-2">{task.title}</h2>
                         <p className="text-sm text-gray-600 mb-4">{task.description}</p>
+                        <p className="text-sm text-gray-600 mb-4">{task.dueDate}</p>
                         <div className="flex justify-between items-center">
                           {renderBadge(task.status)}
                           <div className="flex space-x-2">
