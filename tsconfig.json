@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/pages/index.ts"
-  ],
+, "src/pages/edit/[id].js"  ],
   "exclude": [
     "node_modules"
   ]
