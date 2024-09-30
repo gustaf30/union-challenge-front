@@ -41,6 +41,19 @@ const Home: React.FC = () => {
     }
   }, []);
 
+
+// Atualize para salvar o estado no localStorage
+const toggleDarkMode = () => {
+  const newMode = !darkMode;
+  setDarkMode(newMode);
+  localStorage.setItem('darkMode', newMode.toString());
+  if (newMode) {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+};
+
   useEffect(() => {
     countTasks().then(setTotalTasks);
   }, []);
@@ -113,9 +126,18 @@ const Home: React.FC = () => {
     setDeleteDialogOpen(true);
   };
 
-  const formatDate = (date: Date | undefined): string => {
+  const formatDate = (date: Date | string | undefined): string => {
     if (!date) return 'Data não disponível';
-    return date.toLocaleDateString();
+    
+    // Se o date for uma string, tentar convertê-lo para um objeto Date
+    const parsedDate = typeof date === 'string' ? new Date(date) : date;
+  
+    // Verifica se parsedDate é uma instância válida de Date
+    if (isNaN(parsedDate.getTime())) {
+      return 'Data inválida';
+    }
+  
+    return parsedDate.toLocaleDateString();
   };
 
   return (
@@ -128,7 +150,7 @@ const Home: React.FC = () => {
           <Button onClick={() => router.push('/new')} className={`bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md`}>
             New Task
           </Button>
-          <Button onClick={() => setDarkMode(!darkMode)} className={`bg-gray-200 text-black hover:bg-gray-300 transition-colors duration-200 ease-in-out`}>
+          <Button onClick={toggleDarkMode} className={`bg-gray-200 text-black hover:bg-gray-300 transition-colors duration-200 ease-in-out`}>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </Button>
         </div>
