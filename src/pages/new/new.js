@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { createTask } from "../services/api";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+import { createTask } from "../../services/api";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { useRouter } from "next/router";
 
 export default function NewTask() {
