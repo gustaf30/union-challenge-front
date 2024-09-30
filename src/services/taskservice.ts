@@ -1,52 +1,48 @@
 import { getTasks, deleteTask, searchTasksByTitle, getTasksCount } from './api';
 
 export const fetchTasks = async (filter: any, page: any, limit: any, setTasks: any, router: any) => {
-    
-    // Atualizando a URL com os parâmetros de paginação
     router.push(`?page=${page}&limit=${limit}`);
     
     try {
-      // Se o filtro estiver vazio, busca as tarefas sem o filtro (e sem a condição overdue)
       if (!filter) {
-        const data = await getTasks('', page, limit,  undefined); // Corrigido para passar a paginação corretamente
-        setTasks(data); // Atualiza as tarefas no estado
+        const data = await getTasks('', page, limit,  undefined);
+        setTasks(data);
         return;
       }
 
-      // Caso haja um filtro, realiza a busca com o filtro aplicado
       const data = await getTasks(filter, page, limit, undefined);
       setTasks(data);
     } catch (error) {
-      console.error('Erro ao buscar tarefas:', error);
+      console.error('Error fetching tasks:', error);
     }
 };
 
 export const fetchTasksByTitle = async (search: any) => {
-  if (!search) return []; // Retorna um array vazio se não houver pesquisa
+  if (!search) return [];
 
   try {
     const data = await searchTasksByTitle(search);
     return data;
   } catch (error) {
-    console.error('Erro ao buscar tarefas por título:', error);
+    console.error('Error searching tasks by title:', error);
     return [];
   }
 };
 
 export const fetchTasksOverdue = async (overdue: boolean, page: number, limit: number, setTasks: any) => {
-  if (!overdue) return; // Retorna se overdue não for verdadeiro
+  if (!overdue) return;
 
   try {
-    const data = await getTasks('', page, limit, { overdue: true }); // Chamando a função getTasks com os parâmetros corretos
-    setTasks(data); // Atualiza as tarefas no estado
+    const data = await getTasks('', page, limit, { overdue: true });
+    setTasks(data);
   } catch (error) {
-    console.error('Erro ao buscar tarefas vencidas:', error);
+    console.error('Error getting overdue tasks:', error);
   }
 };
 
 export const countTasks = async () => {
   try {
-    const data = await getTasksCount(); // Considerando que sua API pode retornar um total de registros
+    const data = await getTasksCount();
     return data;
   } catch (error) {
     console.error('Error counting tasks:', error);

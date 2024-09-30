@@ -133,12 +133,12 @@ const Home: React.FC = () => {
   };
 
   const formatDueDate = (date?: Date): string => {
-    if (!date) return "No due date provided"; // Mensagem padrão
+    if (!date) return "No due date provided";
 
     const parsedDate = new Date(date);
     return !isNaN(parsedDate.getTime())
       ? parsedDate.toLocaleDateString()
-      : "Invalid date"; // Mensagem se a data for inválida
+      : "Invalid date";
   };
 
   const prevPage = () => {
