@@ -40,7 +40,7 @@ export const searchTasksByTitle = async (title: string): Promise<Task[]> => {
 
 export const getTask = async (id: string): Promise<Task> => {
   try {
-    const response = await api.get<Task>(`/tasks/${id}`);
+    const response = await api.get<Task>(`/tasks/find/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching task with ID ${id}:`, error);
