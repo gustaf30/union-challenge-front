@@ -1,21 +1,20 @@
 import axios from "axios";
-import { Task, TaskStatus } from "../lib/task.types"; // Ajuste o caminho conforme necessário
+import { Task, TaskStatus } from "../lib/task.types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-// Funções de API
 export const getTasks = async (
   status?: string,
-  page: number = 1, // Define um valor padrão para page
-  limit: number = 5, // Define um valor padrão para limit
+  page: number = 1,
+  limit: number = 5,
   params: { overdue?: boolean } = {}
 ): Promise<Task[]> => {
   try {
     const response = await api.get<Task[]>("/tasks", {
       params: {
-        status: status || "", // Usa uma string vazia como padrão
+        status: status || "",
         page,
         limit,
         ...params,
@@ -24,29 +23,17 @@ export const getTasks = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching tasks:", error);
-    throw error; // Lança o erro para que possa ser tratado em outro lugar
+    throw error;
   }
 };
 
-export const getTasksCount = async (
-  status: string = "",
-  page: number = 0, // Define um valor padrão para page
-  limit: number = 0, // Define um valor padrão para limit
-  params: { overdue?: boolean } = {}
-): Promise<number> => {
+export const getTasksCount = async (): Promise<number> => {
   try {
-    const response = await api.get<Task[]>("/tasks", {
-      params: {
-        status,
-        page,
-        limit,
-        ...params,
-      },
-    });
-    return response.data.length;
+    const response = await api.get<number>("/tasks/count");
+    return response.data;
   } catch (error) {
-    console.error("Error fetching tasks:", error);
-    throw error; // Lança o erro para que possa ser tratado em outro lugar
+    console.error("Error counting tasks:", error);
+    throw error;
   }
 };
 
@@ -62,7 +49,7 @@ export const searchTasksByTitle = async (title: string): Promise<Task[]> => {
 
 export const getTask = async (id: string): Promise<Task> => {
   try {
-    const response = await api.get<Task>(`/tasks/${id}`);
+    const response = await api.get<Task>(`/tasks/find/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching task with ID ${id}:`, error);
