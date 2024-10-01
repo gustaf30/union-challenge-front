@@ -2,15 +2,6 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 
-const formatDueDate = (date?: Date): string => {
-  if (!date) return "No due date provided";
-
-  const parsedDate = new Date(date);
-  return !isNaN(parsedDate.getTime())
-    ? parsedDate.toLocaleDateString()
-    : "Invalid date";
-};
-
 export const TaskCard = ({
   search,
   darkMode,
@@ -34,6 +25,17 @@ export const TaskCard = ({
     reorderedTasks.splice(destination.index, 0, removed);
 
     setTasks(reorderedTasks);
+  };
+
+  const formatDueDate = (date?: Date): string => {
+    if (!date) return "No due date provided";
+    
+    const parsedDate = new Date(date);
+    parsedDate.setHours(0, 0, 0, 0)
+    parsedDate.setDate(parsedDate.getDate() + 1)
+    return !isNaN(parsedDate.getTime())
+      ? parsedDate.toLocaleDateString()
+      : "Invalid date";
   };
 
   return (
@@ -78,12 +80,12 @@ export const TaskCard = ({
                       </p>
                       <p
                         className={`text-sm text-gray-600 mb-4 font-bold ${
-                          new Date(formatDueDate(task.dueDate)) <= new Date()
-                            ? "text-green-600"
-                            : "text-red-600"
+                          new Date(task.dueDate) <= new Date()
+                            ? "text-red-600"
+                            : "text-green-600"
                         }`}
                       >
-                        {formatDueDate(task.dueDate)}
+                        {formatDueDate(new Date(task.dueDate))}
                       </p>
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-2">
@@ -100,7 +102,7 @@ export const TaskCard = ({
                           </Button>
                           <Button
                             size="sm"
-                            onClick={() => openDeleteDialog(task.id)} // Esta função agora está sendo chamada corretamente
+                            onClick={() => openDeleteDialog(task.id)}
                             className={`${
                               darkMode
                                 ? "bg-red-900 text-white hover:bg-red-800"
