@@ -65,7 +65,7 @@ export default function NewTaskComponent() {
     };
 
     const formatDueDate = (date?: Date): string => {
-        if (!date) return "No due date provided";
+        if (!date) return "Select due date";
 
         const parsedDate = new Date(date);
 

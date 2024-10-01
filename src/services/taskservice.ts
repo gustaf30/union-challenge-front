@@ -5,9 +5,12 @@ export const fetchTasks = async (
   page: any,
   limit: any,
   setTasks: any,
-  router: any
+  router: any,
+  overdue: boolean,
 ) => {
-  router.push(`?page=${page}&limit=${limit}`);
+  router.push(`?status=${filter}&page=${page}&limit=${limit}`);
+
+  console.log("ENTRA")
 
   try {
     const data = await getTasks(filter, page, limit, undefined);
@@ -33,14 +36,16 @@ export const fetchTasksOverdue = async (
   overdue: boolean,
   page: number,
   limit: number,
-  setTasks: any
+  setTasks: any,
+  router: any,
 ) => {
   try {
     let data;
-    if (overdue) {
-      data = await getTasks("", page, limit, { overdue: true });
+    if (!overdue) {
+      fetchTasks('', page, limit, setTasks, router, overdue);
+      return;
     } else {
-      data = await getTasks("", page, limit, undefined);
+      data = await getTasks("", page, limit, { overdue: true });
     }
     setTasks(data);
   } catch (error) {

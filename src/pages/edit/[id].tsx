@@ -25,7 +25,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "path";
 
 export default function EditTask() {
   const [task, setTask] = useState<Task>({
@@ -38,6 +37,7 @@ export default function EditTask() {
     updatedAt: new Date(),
     deletedAt: undefined,
   });
+
   const [date, setNewDate] = useState<Date | undefined>(task.dueDate);
 
   const router = useRouter();
@@ -97,6 +97,13 @@ export default function EditTask() {
       ? parsedDate.toLocaleDateString()
       : "Invalid date";
   };
+
+  const enumToString = (status: TaskStatus): string => {
+    if (status == TaskStatus.PENDING) return "Pending";
+    if (status == TaskStatus.IN_PROGRESS) return "In progress";
+    if (status == TaskStatus.COMPLETED) return "Completed";
+    return "Status";
+  }
 
   return (
     <div
@@ -160,7 +167,7 @@ export default function EditTask() {
                     variant="outline"
                     className="w-full hover:bg-gray-100 transition-colors duration-200 ease-in-out"
                   >
-                    Status
+                    {!task.status ? "Status" : enumToString(task.status)}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 bg-white">
@@ -202,7 +209,7 @@ export default function EditTask() {
               <Button
                 type="submit"
                 variant="outline"
-                className="hover:bg-slate-400 transition-colors duration-200 ease-in-out"
+                className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
               >
                 Save changes
               </Button>

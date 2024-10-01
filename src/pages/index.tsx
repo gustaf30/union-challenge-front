@@ -54,15 +54,14 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchTasksData = async () => {
-      await fetchTasks(filter, page, limit, setTasks, router);
+      await fetchTasks(filter, page, limit, setTasks, router, overdue);
     };
     fetchTasksData();
   }, [filter, page, limit]);
 
   useEffect(() => {
-    if (!overdue) return;
     const fetchTasksOD = async () => {
-      await fetchTasksOverdue(overdue, page, limit, setTasks);
+      await fetchTasksOverdue(overdue, page, limit, setTasks, router);
     };
     fetchTasksOD();
   }, [overdue]);
@@ -82,7 +81,7 @@ const Home: React.FC = () => {
       try {
         await deleteTask(taskToDelete);
         setDeleteDialogOpen(false);
-        fetchTasks(filter, page, limit, setTasks, router);
+        fetchTasks(filter, page, limit, setTasks, router, overdue);
       } catch (error) {
         console.error(error);
       }
@@ -119,7 +118,10 @@ const Home: React.FC = () => {
 
       <div className="mb-6 flex justify-start flex-wrap">
         <Button
-          onClick={() => setFilter("")}
+          onClick={() => {
+            setFilter("");
+            setOverdue(false);
+          }}
           className={`${
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
