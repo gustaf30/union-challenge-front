@@ -1,19 +1,59 @@
-export const Pagination = ({ page, totalPages, setPage, darkMode }: any) => (
+import {
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+export const HomePagination = ({
+  page,
+  totalPages,
+  darkMode,
+  setPage,
+}: any) => {
+  const prevPage = () => {
+    if (page == 1) return;
+    setPage(page - 1);
+  };
+
+  const nextPage = () => {
+    if (page == totalPages && page != 1) return;
+    setPage(page + 1);
+  };
+
+  return (
     <div className="mt-auto flex justify-center items-center py-5">
-      <button
-        onClick={() => setPage(page - 1)}
-        disabled={page === 1}
-        className={`${darkMode ? 'bg-blue-950' : 'bg-blue-500'} text-white px-4 py-2`}
-      >
-        Previous
-      </button>
-      <button
-        onClick={() => setPage(page + 1)}
-        disabled={page === totalPages}
-        className={`${darkMode ? 'bg-blue-950' : 'bg-blue-500'} text-white px-4 py-2`}
-      >
-        Next
-      </button>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={prevPage}
+            className={`${
+              darkMode
+                ? "bg-blue-950 hover:bg-blue-900 text-white"
+                : "bg-white hover:bg-gray-100"
+            }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md cursor-pointer`}
+          />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink>{page}</PaginationLink>
+        </PaginationItem>
+        <PaginationEllipsis />
+        <PaginationItem>
+          <PaginationLink>{totalPages}</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext
+            onClick={nextPage}
+            className={`${
+              darkMode
+                ? "bg-blue-950 hover:bg-blue-900 text-white"
+                : "bg-white hover:bg-gray-100"
+            }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md cursor-pointer`}
+          />
+        </PaginationItem>
+      </PaginationContent>
     </div>
   );
-  
+};
