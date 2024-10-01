@@ -198,17 +198,18 @@ export default function EditTask() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <CardFooter className="justify-center items-center">
+              <Button
+                type="submit"
+                variant="outline"
+                className="hover:bg-slate-400 transition-colors duration-200 ease-in-out"
+              >
+                Save changes
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="justify-center items-center">
-          <Button
-            type="submit"
-            variant="outline"
-            className="hover:bg-slate-400 transition-colors duration-200 ease-in-out"
-          >
-            Save changes
-          </Button>
-        </CardFooter>
+
       </Card>
     </div>
   );
