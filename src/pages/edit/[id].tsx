@@ -12,6 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "../../components/ui/card"
+import { Textarea } from "@/components/ui/textarea";
 import { Task, TaskStatus } from "../../lib/task.types";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
@@ -92,102 +100,107 @@ export default function EditTask() {
 
   return (
     <div
-      className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
-      }`}
+      className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+        }`}
     >
-      <h2 className="text-2xl mb-4 font-bold">Edit Task</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <Input
-            value={task.title}
-            onChange={(e) => setTask({ ...task, title: e.target.value })}
-            placeholder="Task Title"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <Input
-            value={task.description ?? ""}
-            onChange={(e) => setTask({ ...task, description: e.target.value })}
-            className="w-1/3 border hover:border-gray-500"
-            placeholder="Description"
-          />
-        </div>
-        <div className="mb-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[240px] justify-start text-left font-normal",
-                  !task.dueDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formatDueDate(task.dueDate)}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-white" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={async (e) => {
-                  if (!e) return;
-                  const newDate = new Date(e.toString())
-                  setNewDate(newDate);
-                  await setTask({ ...task, dueDate: newDate })}
-                }
+      <Card>
+        <CardHeader className="justify-center items-center">
+          <CardTitle className="text-2xl mb-4 font-bold">Edit Task</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <Input
+                value={task.title}
+                onChange={(e) => setTask({ ...task, title: e.target.value })}
+                placeholder="Task Title"
+                required
               />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="mb-4 flex justify-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
-              >
-                Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-white">
-              <DropdownMenuLabel>Select status</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup>
-                <DropdownMenuRadioItem
-                  value={TaskStatus.PENDING}
-                  onClick={() =>
-                    setTask({ ...task, status: TaskStatus.PENDING })
-                  }
-                  className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
-                >
-                  Pending
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem
-                  value={TaskStatus.IN_PROGRESS}
-                  onClick={() =>
-                    setTask({ ...task, status: TaskStatus.IN_PROGRESS })
-                  }
-                  className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
-                >
-                  In progress
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem
-                  value={TaskStatus.COMPLETED}
-                  onClick={() =>
-                    setTask({ ...task, status: TaskStatus.COMPLETED })
-                  }
-                  className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
-                >
-                  Completed
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex justify-center">
+            </div>
+            <div className="mb-4">
+              <Textarea
+                value={task.description ?? ''}
+                onChange={(e) => setTask({ ...task, description: e.target.value })}
+                placeholder="Description"
+              />
+            </div>
+            <div className="mb-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !task.dueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formatDueDate(task.dueDate)}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={async (e) => {
+                      if (!e) return;
+                      const newDate = new Date(e.toString())
+                      setNewDate(newDate);
+                      await setTask({ ...task, dueDate: newDate })
+                    }
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="mb-4 flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                  >
+                    Status
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-white">
+                  <DropdownMenuLabel>Select status</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuRadioGroup value={task.status}>
+                    <DropdownMenuRadioItem
+                      value={TaskStatus.PENDING}
+                      onClick={() =>
+                        setTask({ ...task, status: TaskStatus.PENDING })
+                      }
+                      className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                    >
+                      Pending
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value={TaskStatus.IN_PROGRESS}
+                      onClick={() =>
+                        setTask({ ...task, status: TaskStatus.IN_PROGRESS })
+                      }
+                      className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                    >
+                      In progress
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value={TaskStatus.COMPLETED}
+                      onClick={() =>
+                        setTask({ ...task, status: TaskStatus.COMPLETED })
+                      }
+                      className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                    >
+                      Completed
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="justify-center items-center">
           <Button
             type="submit"
             variant="outline"
@@ -195,8 +208,8 @@ export default function EditTask() {
           >
             Save changes
           </Button>
-        </div>
-      </form>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
