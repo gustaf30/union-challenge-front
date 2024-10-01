@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "../../components/ui/dialog";
+} from "../components/ui/dialog";
 
 import {
   DropdownMenu,
@@ -34,18 +34,18 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 import {
   countTasks,
   fetchTasks,
   fetchTasksByTitle,
   fetchTasksOverdue,
-} from "../../services/taskservice";
+} from "../services/taskservice";
 
 import { deleteTask } from "@/services/api";
-import { Task } from "../../lib/task.types";
+import { Task } from "../lib/task.types";
 import { Card } from "@/components/ui/card";
 
 const Home: React.FC = () => {

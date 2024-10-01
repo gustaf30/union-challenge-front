@@ -1,7 +1,7 @@
 import { Draggable } from 'react-beautiful-dnd';
-import { Card } from "../../../components/ui/card";
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
+import { Card } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
 export const TaskCard = ({ task, index, darkMode, onDelete }: any) => (
   <Draggable key={task.id} draggableId={task.id.toString()} index={index}>

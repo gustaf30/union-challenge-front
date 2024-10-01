@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../../../components/ui/dialog";
-import { Button } from "../../../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "../ui/dialog";
+import { Button } from "../ui/button";
 
 export const DialogDeleteTask = ({ open, onClose, onDelete }: any) => (
   <Dialog open={open} onOpenChange={onClose}>
