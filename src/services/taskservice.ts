@@ -10,12 +10,6 @@ export const fetchTasks = async (
   router.push(`?page=${page}&limit=${limit}`);
 
   try {
-    if (!filter) {
-      const data = await getTasks("", page, limit, undefined);
-      setTasks(data);
-      return;
-    }
-
     const data = await getTasks(filter, page, limit, undefined);
     setTasks(data);
   } catch (error) {
@@ -41,13 +35,16 @@ export const fetchTasksOverdue = async (
   limit: number,
   setTasks: any
 ) => {
-  if (!overdue) return;
-
   try {
-    const data = await getTasks("", page, limit, { overdue: true });
+    let data;
+    if (overdue) {
+      data = await getTasks("", page, limit, { overdue: true });
+    } else {
+      data = await getTasks("", page, limit, undefined);
+    }
     setTasks(data);
   } catch (error) {
-    console.error("Error getting overdue tasks:", error);
+    console.error("Error fetching tasks:", error);
   }
 };
 

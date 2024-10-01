@@ -54,14 +54,18 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchTasksData = async () => {
-      if (overdue) {
-        await fetchTasksOverdue(overdue, page, limit, setTasks);
-      } else {
-        await fetchTasks(filter, page, limit, setTasks, router);
-      }
+      await fetchTasks(filter, page, limit, setTasks, router);
     };
     fetchTasksData();
-  }, [filter, page, limit, overdue]);
+  }, [filter, page, limit]);
+
+  useEffect(() => {
+    if (!overdue) return;
+    const fetchTasksOD = async () => {
+      await fetchTasksOverdue(overdue, page, limit, setTasks);
+    };
+    fetchTasksOD();
+  }, [overdue]);
 
   useEffect(() => {
     const fetchTasksBySearch = async () => {
@@ -161,7 +165,6 @@ const Home: React.FC = () => {
         <Button
           onClick={() => {
             setOverdue(!overdue);
-            fetchTasksOverdue(overdue, page, limit, setTasks);
           }}
           className={`${
             darkMode

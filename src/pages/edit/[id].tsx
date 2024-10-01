@@ -61,8 +61,6 @@ export default function EditTask() {
         ? new Date(taskToEdit.dueDate)
         : taskToEdit.dueDate;
 
-    format
-
     setTask({
       ...taskToEdit,
       description: taskToEdit.description ?? "",
