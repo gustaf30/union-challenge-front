@@ -9,7 +9,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "../ui/button";
 
-export const ShowMenu = ({ darkMode, limit, setLimit }: any) => {
+export const ShowMenu = ({ darkMode, limit, setLimit, totalTasks }: any) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -36,7 +36,7 @@ export const ShowMenu = ({ darkMode, limit, setLimit }: any) => {
           value={limit.toString()}
           onValueChange={(value) => setLimit(Number(value))}
         >
-          {["5", "10", "20"].map((value) => (
+          {["10", "20", "30", `${totalTasks}`].map((value) => (
             <DropdownMenuRadioItem
               key={value}
               value={value}

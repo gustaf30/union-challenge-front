@@ -25,7 +25,7 @@ const Home: React.FC = () => {
   const [filter, setFilter] = useState("");
   const [overdue, setOverdue] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(10);
   const [totalTasks, setTotalTasks] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
@@ -61,7 +61,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchTasksOD = async () => {
-      await fetchTasksOverdue(overdue, page, limit, setTasks, router);
+      await fetchTasksOverdue(overdue, page, limit, setTasks, router, filter);
     };
     fetchTasksOD();
   }, [overdue]);
@@ -109,10 +109,7 @@ const Home: React.FC = () => {
           >
             New Task
           </Button>
-          <DarkModeToggle
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-          />
+          <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
         </div>
       </header>
 
@@ -132,7 +129,10 @@ const Home: React.FC = () => {
         </Button>
         <div className="mr-2"></div>
         <Button
-          onClick={() => setFilter("0")}
+          onClick={() => {
+            setFilter("0");
+            setOverdue(false);
+          }}
           className={`${
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
@@ -143,7 +143,10 @@ const Home: React.FC = () => {
         </Button>
         <div className="mr-2"></div>
         <Button
-          onClick={() => setFilter("1")}
+          onClick={() => {
+            setFilter("1");
+            setOverdue(false);
+          }}
           className={`${
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
@@ -154,7 +157,10 @@ const Home: React.FC = () => {
         </Button>
         <div className="mr-2"></div>
         <Button
-          onClick={() => setFilter("2")}
+          onClick={() => {
+            setFilter("2");
+            setOverdue(false);
+          }}
           className={`${
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
@@ -189,11 +195,7 @@ const Home: React.FC = () => {
           } w-1/4 border transition-colors duration-200 ease-in-out rounded-md`}
         />
 
-        <ShowMenu
-          darkMode={darkMode}
-          limit={limit}
-          setLimit={setLimit}
-        />
+        <ShowMenu darkMode={darkMode} limit={limit} setLimit={setLimit} totalTasks={totalTasks} />
       </div>
 
       <TaskCard
