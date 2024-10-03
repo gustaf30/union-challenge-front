@@ -8,8 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "../ui/button";
+import { useEffect } from "react";
 
-export const ShowMenu = ({ darkMode, limit, setLimit, totalTasks }: any) => {
+export const ShowMenu = ({ darkMode, limit, setLimit, totalTasks, params, setParams }: any) => {
+  useEffect(() => {
+    
+  }, [limit]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,9 +39,14 @@ export const ShowMenu = ({ darkMode, limit, setLimit, totalTasks }: any) => {
         <DropdownMenuSeparator className="my-1" />
         <DropdownMenuRadioGroup
           value={limit.toString()}
-          onValueChange={(value) => setLimit(Number(value))}
+          onValueChange={(value) => {
+            setLimit(value);
+            const updatedParams = new URLSearchParams(params)
+            updatedParams.set("limit", limit)
+            setParams(updatedParams)
+          }}
         >
-          {["10", "20", "30", `${totalTasks}`].map((value) => (
+          {["9", "15", "24", `${totalTasks}`].map((value) => (
             <DropdownMenuRadioItem
               key={value}
               value={value}

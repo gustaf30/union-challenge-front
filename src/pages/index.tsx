@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { useDebounce } from "use-debounce";
+
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
@@ -9,7 +11,6 @@ import {
   countTasks,
   fetchTasks,
   fetchTasksByTitle,
-  fetchTasksOverdue,
 } from "../services/taskservice";
 
 import { deleteTask } from "@/services/api";
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
   const [filter, setFilter] = useState("");
   const [overdue, setOverdue] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(9);
   const [totalTasks, setTotalTasks] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
@@ -33,8 +34,16 @@ const Home: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const router = useRouter();
+  let url = new URL(
+    `http://localhost:3001?status=${filter}&page=${page}&limit=${limit}&overdue=${overdue}`
+  );
+  const [params, setParams] = useState<URLSearchParams>(
+    new URLSearchParams(url.search)
+  );
+  const [debounce] = useDebounce(search, 500);
 
   useEffect(() => {
+    document.title = "To do List";
     const savedDarkMode = localStorage.getItem("darkMode");
     if (savedDarkMode === "true") {
       setDarkMode(true);
@@ -43,6 +52,7 @@ const Home: React.FC = () => {
       setDarkMode(false);
       document.body.classList.remove("dark");
     }
+    
     countTasks().then(setTotalTasks);
   }, []);
 
@@ -54,34 +64,30 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchTasksData = async () => {
-      await fetchTasks(filter, page, limit, setTasks, router, overdue);
+      await fetchTasks(setTasks, url, router);
     };
     fetchTasksData();
-  }, [filter, page, limit]);
+  }, [params]);
 
   useEffect(() => {
-    const fetchTasksOD = async () => {
-      await fetchTasksOverdue(overdue, page, limit, setTasks, router, filter);
-    };
-    fetchTasksOD();
-  }, [overdue]);
-
-  useEffect(() => {
-    const fetchTasksBySearch = async () => {
-      if (search) {
-        const results = await fetchTasksByTitle(search);
+    if (debounce == "") {
+      fetchTasks(setTasks, url, router);
+    } else {
+      router.push(`?search=${debounce}`);
+      const titleSearch = async () => {
+        const results = await fetchTasksByTitle(debounce);
         setTasks(results);
-      }
-    };
-    fetchTasksBySearch();
-  }, [search]);
+      };
+      titleSearch();
+    }
+  }, [debounce]);
 
   const handleDeleteTask = async () => {
     if (taskToDelete) {
       try {
         await deleteTask(taskToDelete);
         setDeleteDialogOpen(false);
-        fetchTasks(filter, page, limit, setTasks, router, overdue);
+        fetchTasks(setTasks, url, router);
       } catch (error) {
         console.error(error);
       }
@@ -118,6 +124,10 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("");
             setOverdue(false);
+            setSearch("")
+            const updatedParams = new URLSearchParams(params);
+            updatedParams.set("status", filter);
+            setParams(updatedParams);
           }}
           className={`${
             darkMode
@@ -132,6 +142,10 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("0");
             setOverdue(false);
+            setSearch("")
+            const updatedParams = new URLSearchParams(params);
+            updatedParams.set("status", filter);
+            setParams(updatedParams);
           }}
           className={`${
             darkMode
@@ -146,6 +160,10 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("1");
             setOverdue(false);
+            setSearch("")
+            const updatedParams = new URLSearchParams(params);
+            updatedParams.set("status", filter);
+            setParams(updatedParams);
           }}
           className={`${
             darkMode
@@ -160,6 +178,10 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("2");
             setOverdue(false);
+            setSearch("")
+            const updatedParams = new URLSearchParams(params);
+            updatedParams.set("status", filter);
+            setParams(updatedParams);
           }}
           className={`${
             darkMode
@@ -172,7 +194,13 @@ const Home: React.FC = () => {
         <div className="mr-2"></div>
         <Button
           onClick={() => {
+            setFilter("");
             setOverdue(!overdue);
+            setSearch("")
+            const updatedParams = new URLSearchParams(params);
+            updatedParams.set("status", filter);
+            updatedParams.set("overdue", overdue.toString());
+            setParams(updatedParams);
           }}
           className={`${
             darkMode
@@ -187,7 +215,11 @@ const Home: React.FC = () => {
         <Input
           placeholder="Search tasks..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            const searchValue = e.target.value;
+            router.push(`?search=${searchValue}`);
+            setSearch(searchValue);
+          }}
           className={`${
             darkMode
               ? "border-blue-900 hover:border-blue-800 text-white"
@@ -195,11 +227,18 @@ const Home: React.FC = () => {
           } w-1/4 border transition-colors duration-200 ease-in-out rounded-md`}
         />
 
-        <ShowMenu darkMode={darkMode} limit={limit} setLimit={setLimit} totalTasks={totalTasks} />
+        <ShowMenu
+          darkMode={darkMode}
+          limit={limit}
+          setLimit={setLimit}
+          totalTasks={totalTasks}
+          params={params}
+          setParams={setParams}
+        />
       </div>
 
       <TaskCard
-        search={search}
+        debounce={debounce}
         darkMode={darkMode}
         tasks={tasks}
         router={router}
@@ -220,6 +259,8 @@ const Home: React.FC = () => {
         totalPages={totalPages}
         darkMode={darkMode}
         setPage={setPage}
+        params={params}
+        setParams={setParams}
       />
     </div>
   );

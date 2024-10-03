@@ -69,11 +69,6 @@ export default function NewTaskComponent() {
 
         const parsedDate = new Date(date);
 
-        if (date.getHours() != 0) {
-            parsedDate.setHours(0, 0, 0, 0);
-            parsedDate.setDate(parsedDate.getDate() + 1);
-        }
-
         return !isNaN(parsedDate.getTime())
             ? parsedDate.toLocaleDateString()
             : "Invalid date";
@@ -128,7 +123,7 @@ export default function NewTaskComponent() {
                                         onSelect={async (e) => {
                                             if (!e) return;
                                             const newDate = new Date(e.toString());
-                                            setNewDate(newDate);
+                                            console.log(newDate)
                                             await setTask({ ...task, dueDate: newDate });
                                         }}
                                     />
@@ -139,7 +134,7 @@ export default function NewTaskComponent() {
                             <Button
                                 type="submit"
                                 variant="outline"
-                                className="hover:bg-slate-400 transition-colors duration-200 ease-in-out"
+                                className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
                             >
                                 Create Task
                             </Button>

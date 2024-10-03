@@ -12,15 +12,25 @@ export const HomePagination = ({
   totalPages,
   darkMode,
   setPage,
+  params,
+  setParams,
 }: any) => {
+  const updateURLParams = () => {
+    const updatedParams = new URLSearchParams(params);
+    updatedParams.set("page", page);
+    setParams(updatedParams);
+  };
+
   const prevPage = () => {
     if (page == 1) return;
     setPage(page - 1);
+    updateURLParams()
   };
 
   const nextPage = () => {
     if (page == totalPages && page != 1) return;
     setPage(page + 1);
+    updateURLParams()
   };
 
   return (

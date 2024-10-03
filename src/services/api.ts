@@ -9,7 +9,7 @@ export const getTasks = async (
   status?: string,
   page: number = 1,
   limit: number = 5,
-  params: { overdue?: boolean } = {}
+  overdue?: boolean,
 ): Promise<Task[]> => {
   try {
     const response = await api.get<Task[]>("/tasks", {
@@ -17,7 +17,7 @@ export const getTasks = async (
         status: status || "",
         page,
         limit,
-        ...params,
+        overdue,
       },
     });
     return response.data;
