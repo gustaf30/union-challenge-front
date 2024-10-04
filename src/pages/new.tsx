@@ -65,14 +65,9 @@ export default function NewTaskComponent() {
     };
 
     const formatDueDate = (date?: Date): string => {
-        if (!date) return "No due date provided";
+        if (!date) return "Select due date";
 
         const parsedDate = new Date(date);
-
-        if (date.getHours() != 0) {
-            parsedDate.setHours(0, 0, 0, 0);
-            parsedDate.setDate(parsedDate.getDate() + 1);
-        }
 
         return !isNaN(parsedDate.getTime())
             ? parsedDate.toLocaleDateString()
@@ -128,7 +123,7 @@ export default function NewTaskComponent() {
                                         onSelect={async (e) => {
                                             if (!e) return;
                                             const newDate = new Date(e.toString());
-                                            setNewDate(newDate);
+                                            console.log(newDate)
                                             await setTask({ ...task, dueDate: newDate });
                                         }}
                                     />

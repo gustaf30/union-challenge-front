@@ -3,7 +3,7 @@ import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 
 export const TaskCard = ({
-  search,
+  debounce,
   darkMode,
   tasks,
   router,
@@ -31,10 +31,11 @@ export const TaskCard = ({
     if (!date) return "No due date provided";
     
     const parsedDate = new Date(date);
-    parsedDate.setHours(0, 0, 0, 0)
-    parsedDate.setDate(parsedDate.getDate() + 1)
+    
     return !isNaN(parsedDate.getTime())
-      ? parsedDate.toLocaleDateString()
+      ? parsedDate.toLocaleDateString('pt-BR', {
+        timeZone: 'UTC'
+      })
       : "Invalid date";
   };
 
@@ -49,7 +50,7 @@ export const TaskCard = ({
           >
             {tasks
               .filter((task: { title: string }) =>
-                task.title.toLowerCase().includes(search.toLowerCase())
+                task.title.toLowerCase().includes(debounce.toLowerCase())
               )
               .map((task: any, index: any) => (
                 <Draggable
