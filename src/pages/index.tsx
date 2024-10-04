@@ -89,7 +89,7 @@ const Home: React.FC = () => {
 
   const handleTaskCreated = async () => {
     setNewTaskModalOpen(false);
-    await fetchTasks(filter, page, limit, setTasks, router);
+    await fetchTasks(setTasks, url, router);
   };
 
   const handleDeleteTask = async () => {
