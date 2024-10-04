@@ -17,11 +17,15 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle
-} from "../../components/ui/card"
+  CardTitle,
+} from "../../components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Task, TaskStatus } from "../../lib/task.types";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -89,8 +93,8 @@ export default function EditTask() {
     const parsedDate = new Date(date);
 
     if (date.getHours() != 0) {
-      parsedDate.setHours(0, 0, 0, 0)
-      parsedDate.setDate(parsedDate.getDate() + 1)
+      parsedDate.setHours(0, 0, 0, 0);
+      parsedDate.setDate(parsedDate.getDate() + 1);
     }
 
     return !isNaN(parsedDate.getTime())
@@ -103,12 +107,13 @@ export default function EditTask() {
     if (status == TaskStatus.IN_PROGRESS) return "In progress";
     if (status == TaskStatus.COMPLETED) return "Completed";
     return "Status";
-  }
+  };
 
   return (
     <div
-      className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
-        }`}
+      className={`flex flex-col justify-center items-center min-h-screen w-full p-6 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+      }`}
     >
       <Card>
         <CardHeader className="justify-center items-center">
@@ -126,8 +131,10 @@ export default function EditTask() {
             </div>
             <div className="mb-4">
               <Textarea
-                value={task.description ?? ''}
-                onChange={(e) => setTask({ ...task, description: e.target.value })}
+                value={task.description ?? ""}
+                onChange={(e) =>
+                  setTask({ ...task, description: e.target.value })
+                }
                 placeholder="Description"
               />
             </div>
@@ -135,8 +142,12 @@ export default function EditTask() {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    variant={"outline"}
                     className={cn(
+                      `${
+                        darkMode
+                          ? "bg-blue-950 hover:bg-blue-900 text-white"
+                          : "bg-white hover:bg-gray-100"
+                      }`,
                       "w-[240px] justify-start text-left font-normal",
                       !task.dueDate && "text-muted-foreground"
                     )}
@@ -151,11 +162,10 @@ export default function EditTask() {
                     selected={date}
                     onSelect={async (e) => {
                       if (!e) return;
-                      const newDate = new Date(e.toString())
+                      const newDate = new Date(e.toString());
                       setNewDate(newDate);
-                      await setTask({ ...task, dueDate: newDate })
-                    }
-                    }
+                      await setTask({ ...task, dueDate: newDate });
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -164,8 +174,11 @@ export default function EditTask() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant="outline"
-                    className="w-full hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                    className={`${
+                      darkMode
+                        ? "bg-blue-950 hover:bg-blue-900 text-white"
+                        : "bg-white hover:bg-gray-100"
+                    }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md w-full`}
                   >
                     {!task.status ? "Status" : enumToString(task.status)}
                   </Button>
@@ -208,15 +221,17 @@ export default function EditTask() {
             <CardFooter className="justify-center items-center">
               <Button
                 type="submit"
-                variant="outline"
-                className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                className={`${
+                  darkMode
+                    ? "bg-blue-950 hover:bg-blue-900 text-white"
+                    : "bg-white hover:bg-gray-100"
+                }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
               >
                 Save changes
               </Button>
             </CardFooter>
           </form>
         </CardContent>
-
       </Card>
     </div>
   );

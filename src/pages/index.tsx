@@ -53,7 +53,7 @@ const Home: React.FC = () => {
       setDarkMode(false);
       document.body.classList.remove("dark");
     }
-    
+
     countTasks().then(setTotalTasks);
   }, []);
 
@@ -106,8 +106,9 @@ const Home: React.FC = () => {
 
   return (
     <div
-      className={`flex flex-col min-h-screen w-full p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
-        }`}
+      className={`flex flex-col min-h-screen w-full p-6 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+      }`}
     >
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">
@@ -116,10 +117,11 @@ const Home: React.FC = () => {
         <div className="flex space-x-4">
           <Button
             onClick={handleNewTaskClick}
-            className={`${darkMode
-              ? "bg-blue-950 text-white hover:bg-blue-900"
-              : "bg-blue-500 text-white hover:bg-blue-600"
-              } px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}
+            className={`${
+              darkMode
+                ? "bg-blue-950 text-white hover:bg-blue-900"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            } px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}
           >
             New Task
           </Button>
@@ -129,17 +131,25 @@ const Home: React.FC = () => {
 
       {newTaskModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-black"} p-4 rounded-lg w-1/2 relative`}>
+          <div
+            className={`${
+              darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-black"
+            } p-4 rounded-lg w-1/2 relative`}
+          >
             <button
-              className={`${darkMode
-                ? "text-gray-300 hover:text-white"
-                : " text-gray-600 hover:text-gray-900"
-                } transition-colors duration-200 ease-in-out absolute top-0 right-0 mr-1 font-bold`}
+              className={`${
+                darkMode
+                  ? "text-gray-300 hover:text-white"
+                  : " text-gray-600 hover:text-gray-900"
+              } transition-colors duration-200 ease-in-out absolute top-0 right-0 mr-1 font-bold`}
               onClick={() => setNewTaskModalOpen(false)}
             >
               ✕
             </button>
-            <NewTaskForm onClose={() => setNewTaskModalOpen(false)} onTaskCreated={handleTaskCreated} />
+            <NewTaskForm
+              onClose={() => setNewTaskModalOpen(false)}
+              onTaskCreated={handleTaskCreated}
+            />
           </div>
         </div>
       )}
@@ -149,7 +159,7 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("");
             setOverdue(false);
-            setSearch("")
+            setSearch("");
             const updatedParams = new URLSearchParams(params);
             updatedParams.set("status", filter);
             setParams(updatedParams);
@@ -158,7 +168,7 @@ const Home: React.FC = () => {
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
               : "bg-white hover:bg-gray-100"
-          }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
         >
           All
         </Button>
@@ -167,7 +177,7 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("0");
             setOverdue(false);
-            setSearch("")
+            setSearch("");
             const updatedParams = new URLSearchParams(params);
             updatedParams.set("status", filter);
             setParams(updatedParams);
@@ -176,7 +186,7 @@ const Home: React.FC = () => {
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
               : "bg-white hover:bg-gray-100"
-          }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
         >
           Pending
         </Button>
@@ -185,7 +195,7 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("1");
             setOverdue(false);
-            setSearch("")
+            setSearch("");
             const updatedParams = new URLSearchParams(params);
             updatedParams.set("status", filter);
             setParams(updatedParams);
@@ -194,7 +204,7 @@ const Home: React.FC = () => {
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
               : "bg-white hover:bg-gray-100"
-          }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
         >
           In Progress
         </Button>
@@ -203,7 +213,7 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("2");
             setOverdue(false);
-            setSearch("")
+            setSearch("");
             const updatedParams = new URLSearchParams(params);
             updatedParams.set("status", filter);
             setParams(updatedParams);
@@ -212,7 +222,7 @@ const Home: React.FC = () => {
             darkMode
               ? "bg-blue-950 hover:bg-blue-900 text-white"
               : "bg-white hover:bg-gray-100"
-          }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
         >
           Completed
         </Button>
@@ -221,16 +231,17 @@ const Home: React.FC = () => {
           onClick={() => {
             setFilter("");
             setOverdue(!overdue);
-            setSearch("")
+            setSearch("");
             const updatedParams = new URLSearchParams(params);
             updatedParams.set("status", filter);
             updatedParams.set("overdue", overdue.toString());
             setParams(updatedParams);
           }}
-          className={`${darkMode
-            ? "bg-blue-950 hover:bg-blue-900 text-white"
-            : "bg-white hover:bg-gray-100"
-            }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          className={`${
+            darkMode
+              ? "bg-blue-950 hover:bg-blue-900 text-white"
+              : "bg-white hover:bg-gray-100"
+          }  transition-colors duration-200 ease-in-out px-4 py-2 rounded-md`}
         >
           Overdue
         </Button>
