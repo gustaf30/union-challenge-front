@@ -12,7 +12,7 @@ import {
   fetchTasks,
   fetchTasksByTitle,
 } from "../services/taskservice";
-
+import NewTaskForm from "../components/home/home.newtask.form";
 import { deleteTask } from "@/services/api";
 import { Task } from "../lib/task.types";
 import { HomePagination } from "../components/home/home.pagination";
@@ -31,6 +31,7 @@ const Home: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [newTaskModalOpen, setNewTaskModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const router = useRouter();
@@ -82,6 +83,15 @@ const Home: React.FC = () => {
     }
   }, [debounce]);
 
+  const handleNewTaskClick = () => {
+    setNewTaskModalOpen(true);
+  };
+
+  const handleTaskCreated = async () => {
+    setNewTaskModalOpen(false);
+    await fetchTasks(filter, page, limit, setTasks, router);
+  };
+
   const handleDeleteTask = async () => {
     if (taskToDelete) {
       try {
@@ -96,9 +106,8 @@ const Home: React.FC = () => {
 
   return (
     <div
-      className={`flex flex-col min-h-screen w-full p-6 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
-      }`}
+      className={`flex flex-col min-h-screen w-full p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+        }`}
     >
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">
@@ -106,18 +115,34 @@ const Home: React.FC = () => {
         </h1>
         <div className="flex space-x-4">
           <Button
-            onClick={() => router.push("/new")}
-            className={`${
-              darkMode
-                ? "bg-blue-950 text-white hover:bg-blue-900"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            } px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}
+            onClick={handleNewTaskClick}
+            className={`${darkMode
+              ? "bg-blue-950 text-white hover:bg-blue-900"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+              } px-4 py-2 rounded-md transition-colors duration-200 ease-in-out`}
           >
             New Task
           </Button>
           <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
         </div>
       </header>
+
+      {newTaskModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-black"} p-4 rounded-lg w-1/2 relative`}>
+            <button
+              className={`${darkMode
+                ? "text-gray-300 hover:text-white"
+                : " text-gray-600 hover:text-gray-900"
+                } transition-colors duration-200 ease-in-out absolute top-0 right-0 mr-1 font-bold`}
+              onClick={() => setNewTaskModalOpen(false)}
+            >
+              ✕
+            </button>
+            <NewTaskForm onClose={() => setNewTaskModalOpen(false)} onTaskCreated={handleTaskCreated} />
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 flex justify-start flex-wrap">
         <Button
@@ -202,11 +227,10 @@ const Home: React.FC = () => {
             updatedParams.set("overdue", overdue.toString());
             setParams(updatedParams);
           }}
-          className={`${
-            darkMode
-              ? "bg-blue-950 hover:bg-blue-900 text-white"
-              : "bg-white hover:bg-gray-100"
-          }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
+          className={`${darkMode
+            ? "bg-blue-950 hover:bg-blue-900 text-white"
+            : "bg-white hover:bg-gray-100"
+            }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
         >
           Overdue
         </Button>

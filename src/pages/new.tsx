@@ -134,7 +134,10 @@ export default function NewTaskComponent() {
                             <Button
                                 type="submit"
                                 variant="outline"
-                                className="hover:bg-gray-100 transition-colors duration-200 ease-in-out"
+                                className={`${darkMode
+                                    ? "bg-blue-950 hover:bg-blue-900 text-white"
+                                    : "bg-white hover:bg-gray-100"
+                                    }  transition-colors duration-200 ease-in-out px-4 py-2 ml-2 rounded-md`}
                             >
                                 Create Task
                             </Button>
