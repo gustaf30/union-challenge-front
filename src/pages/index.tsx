@@ -11,7 +11,7 @@ import {
   fetchTasksByTitle,
   fetchTasksOverdue,
 } from "../services/taskservice";
-import NewTaskForm from "../components/home/NewTaskForm";
+import NewTaskForm from "../components/home/home.newtask.form";
 import { deleteTask } from "@/services/api";
 import { Task } from "../lib/task.types";
 import { HomePagination } from "../components/home/home.pagination";
@@ -83,8 +83,8 @@ const Home: React.FC = () => {
   };
 
   const handleTaskCreated = async () => {
-    setNewTaskModalOpen(false); // Fecha o modal quando a tarefa for criada
-    await fetchTasks(filter, page, limit, setTasks, router); // Atualiza a lista de tarefas
+    setNewTaskModalOpen(false);
+    await fetchTasks(filter, page, limit, setTasks, router);
   };
 
   const handleDeleteTask = async () => {
@@ -127,9 +127,12 @@ const Home: React.FC = () => {
 
       {newTaskModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded-lg w-1/2">
+          <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-black"} p-4 rounded-lg w-1/2 relative`}>
             <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className={`${darkMode
+                ? "text-gray-300 hover:text-white"
+                : " text-gray-600 hover:text-gray-900"
+                } transition-colors duration-200 ease-in-out absolute top-0 right-0 mr-1 font-bold`}
               onClick={() => setNewTaskModalOpen(false)}
             >
               ✕
