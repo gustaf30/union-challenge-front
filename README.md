@@ -50,12 +50,12 @@ Ensure the app is fully responsive, providing an optimal experience across mobil
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/gustaf30/union-challenge-front.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd your-repo-name
+   cd union-challenge-front
    ```
 
 3. Install dependencies:
@@ -65,7 +65,11 @@ Ensure the app is fully responsive, providing an optimal experience across mobil
 
 4. Run the development server:
    ```bash
-   npm run dev
+   npm run dev -- p 3001
+   ```
+   Or
+   ```bash
+   docker compose up --build
    ```
 
-5. Open your browser at `http://localhost:3001` to view the app.
+6. Open your browser at `http://localhost:3001` to view the app.
